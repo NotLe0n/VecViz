@@ -15,7 +15,7 @@ void FontManager::LoadFonts() {
 std::vector<int> FontManager::ParseGlyphFile(const std::string& path) {
     std::ifstream t(path);
     if (!t.is_open()) {
-       throw std::exception((std::string("Couldn't open ") + path).c_str());
+       throw std::runtime_error((std::string("Couldn't open ") + path).c_str());
     }
 
     std::stringstream buffer;
@@ -95,7 +95,7 @@ char16_t FontManager::ToSubscript(char16_t c) {
             a = 0x9B;
             break;
         default:
-            throw std::exception("No subscript character found!");
+            throw std::runtime_error("No subscript character found!");
     }
 
     return 0x20 | a;

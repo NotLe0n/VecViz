@@ -3,6 +3,7 @@
 #include "VectorSpaces/VectorSpace2D.h"
 #include "rlImGui.h"
 #include "imgui.h"
+#include "raymath.h"
 
 void UpdateDrawFrame();
 

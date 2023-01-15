@@ -1,3 +1,4 @@
+#include <locale>
 #include "VectorSpace2D.h"
 #include "../Drawing.h"
 #include "../UI/UIWindow.h"
