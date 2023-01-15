@@ -23,29 +23,12 @@ if (NOT raylib_FOUND) # If there's none, fetch and build raylib
     endif()
 endif()
 
-# -- ImGui --
-set(IMGUI_VERSION 1.89.2)
-find_package(imgui ${IMGUI_VERSION} QUIET) # QUIET or REQUIRED
-if (NOT imgui_FOUND) # If there's none, fetch and build raylib
-    FetchContent_Declare(
-            imgui
-            URL https://github.com/ocornut/imgui/archive/refs/tags/v${IMGUI_VERSION}.tar.gz
-    )
-    FetchContent_MakeAvailable(imgui)
-endif()
-
-# -- rlImGui --
-FetchContent_Declare(
-        rlImGui
-        URL https://github.com/raylib-extras/rlImGui
-)
-FetchContent_MakeAvailable(rlImGui)
-
 # Our Project
-add_executable(${PROJECT_NAME} main.cpp UI/UIWindow.cpp UI/UIWindow.h FontManager.cpp FontManager.h utils.h utils.cpp VectorSpaces/VectorSpace.h VectorSpaces/VectorSpace2D.cpp VectorSpaces/VectorSpace2D.h VectorSpaces/DrawVector.cpp VectorSpaces/DrawVector.h Drawing.h VectorSpaces/VectorSpace.cpp ${rlImGui_SOURCE_DIR}/rlImGui.cpp ${rlImGui_SOURCE_DIR}/rlImGui.h)
+add_executable(${PROJECT_NAME} main.cpp UI/UIWindow.cpp UI/UIWindow.h FontManager.cpp FontManager.h utils.h utils.cpp VectorSpaces/VectorSpace.h VectorSpaces/VectorSpace2D.cpp VectorSpaces/VectorSpace2D.h VectorSpaces/DrawVector.cpp VectorSpaces/DrawVector.h Drawing.h VectorSpaces/VectorSpace.cpp lib/rlImGui/rlImGui.cpp lib/rlImGui/rlImGui.h lib/imgui/imgui.h lib/imgui/imgui.cpp lib/imgui/imgui_internal.h lib/imgui/imgui_draw.cpp lib/imgui/imgui_tables.cpp lib/imgui/imgui_demo.cpp lib/imgui/imgui_widgets.cpp)
 #set(raylib_VERBOSE 1)
 target_link_libraries(${PROJECT_NAME} raylib)
-target_include_directories(${PROJECT_NAME} ${imgui_SOURCE_DIR} ${rlImGui_SOURCE_DIR})
+include_directories(lib/imgui lib/rlImGui)
+
 
 file(COPY ${CMAKE_SOURCE_DIR}/Fonts DESTINATION ${CMAKE_BINARY_DIR})
 

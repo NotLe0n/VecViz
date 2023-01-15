@@ -28,7 +28,7 @@ void UpdateDrawFrame()
 {
     DrawRectangle(0, 0, 300, GetScreenHeight(), {33, 33, 33, 255}); // Sidebar rectangle
     rlImGuiBegin();
-    ImGui::Text("hey");
+    //ImGui::Text("hey");
     rlImGuiEnd();
     currentVs->Render();
 }

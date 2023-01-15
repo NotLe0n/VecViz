@@ -1,5 +1,5 @@
 #include "UIWindow.h"
-#include "../rlImGui.h"
+#include "rlImGui.h"
 #include "../FontManager.h"
 
 UIWindow::UIWindow(const std::string& title, const Color& backgroundColor, const ConfigFlags& flags)
