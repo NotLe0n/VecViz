@@ -1,11 +1,7 @@
 #include "VectorSpace.h"
 
-float VectorSpace::drawOffset = 0;
+Vector2 VectorSpace::drawOffset = {};
 
 RenderTexture* VectorSpace::GetRenderTexture() {
     return &rt;
-}
-
-std::vector<DrawVector> VectorSpace::GetVectors() {
-    return vectors;
 }

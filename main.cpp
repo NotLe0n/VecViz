@@ -8,6 +8,7 @@
 #include "imgui_internal.h"
 
 void UpdateDrawFrame();
+void DrawSideBar();
 
 VectorSpace* currentVs = nullptr;
 
@@ -35,29 +36,18 @@ void UpdateDrawFrame()
     ImGuiID dock_id =ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
 
     if (ImGui::Begin("sidebar")) {
-        ImGui::InputFloat2("Vector", addVectorVals);
-        if (ImGui::Button("Add Vector")) {
-            currentVs->AddVector(DrawVector{addVectorVals[0], addVectorVals[1]});
-        }
-
-        ImGui::Text("Vectors: ");
-        if (ImGui::BeginListBox("vectors list:", ImVec2(-FLT_MIN, currentVs->GetVectors().size() * ImGui::GetTextLineHeightWithSpacing()))) {
-            for (int n = 0; n < currentVs->GetVectors().size(); n++) {
-                ImGui::Text("v%d: [%f, %f]", n, currentVs->GetVectors()[n].vector.x, currentVs->GetVectors()[n].vector.y);
-            }
-            ImGui::EndListBox();
-        }
+        DrawSideBar();
         ImGui::End();
     }
 
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
     ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
-    if (ImGui::Begin("Vectorspace view")) {
+    if (ImGui::Begin("Vectorspace view"), 0, ImGuiWindowFlags_NoDocking) {
         Texture *renderTexture = &currentVs->GetRenderTexture()->texture;
         rlImGuiImageRect(renderTexture, ImGui::GetWindowWidth(), ImGui::GetWindowHeight() - ImGui::GetFrameHeight(), {0, 0, ImGui::GetWindowWidth(), ImGui::GetWindowHeight() - ImGui::GetFrameHeight()});
 
-        VectorSpace::drawOffset = GetScreenWidth() - ImGui::GetWindowWidth();
-        if(ImGui::IsWindowHovered()) {
+        VectorSpace::drawOffset = {ImGui::GetWindowPos().x, ImGui::GetWindowPos().y};
+        if (ImGui::IsWindowHovered()) {
             currentVs->Update();
         }
         currentVs->Draw();
@@ -69,11 +59,62 @@ void UpdateDrawFrame()
     if (first_time) {
         first_time = false;
         ImGui::DockBuilderDockWindow("Vectorspace view", dock_id);
-        //ImGui::DockBuilderDockWindow("sidebar", dock_id);
         ImGui::DockBuilderFinish(dock_id);
     }
 
     ImGui::ShowDemoWindow();
 
     rlImGuiEnd();
+}
+
+float transformMatrixVals[9] = { 1, 0, 0, 0, 1, 0, 0, 0, 1, };
+void DrawSideBar() {
+    ImGui::InputFloat2("Vector", addVectorVals);
+    if (ImGui::Button("Add Vector")) {
+        currentVs->AddVector(DrawVector{addVectorVals[0], addVectorVals[1]});
+    }
+
+    ImGui::Separator();
+
+    ImGui::Text("Vectors: ");
+    if (ImGui::BeginListBox("vectors list:", ImVec2(-FLT_MIN, 10 * ImGui::GetTextLineHeightWithSpacing()))) {
+        for (int n = 0; n < currentVs->vectors.size(); n++) {
+            ImGui::Text("v%d:", n);
+            ImGui::SameLine();
+
+            ImGui::SetNextItemWidth(100);
+            std::string xlabel = std::string("##VectorInputX") + std::to_string(n);
+            ImGui::InputFloat(xlabel.c_str(), &currentVs->vectors[n].vector.x, 1);
+
+            ImGui::SameLine();
+            ImGui::SetNextItemWidth(100);
+            std::string ylabel = std::string("##VectorInputY") + std::to_string(n);
+            ImGui::InputFloat(ylabel.c_str(), &currentVs->vectors[n].vector.y, 1);
+        }
+        ImGui::EndListBox();
+    }
+    ImGui::Separator();
+    ImGui::Text("Transformation percentage:");
+    ImGui::SliderFloat("##tValue", &currentVs->t, 0, 1);
+
+    ImGui::Text("Transformation matrix:");
+    for (int i = 0; i < currentVs->GetDimension(); ++i) {
+        ImGui::SetNextItemWidth(80);
+        ImGui::InputFloat((std::string("##transformMatrix:") + std::to_string(i)).c_str(), &transformMatrixVals[i]);
+        for (int j = 1; j < currentVs->GetDimension(); ++j) {
+            ImGui::SameLine();
+            ImGui::SetNextItemWidth(80);
+            ImGui::InputFloat((std::string("##transformMatrix:") + std::to_string(i+j*3)).c_str(), &transformMatrixVals[i+j*3]);
+        }
+    }
+
+    if (ImGui::Button("Apply Transformation")) {
+        currentVs->ApplyTransformation({
+            transformMatrixVals[0], transformMatrixVals[3], transformMatrixVals[6], 0,
+            transformMatrixVals[1], transformMatrixVals[4], transformMatrixVals[7], 0,
+            transformMatrixVals[2], transformMatrixVals[5], transformMatrixVals[8], 0,
+            0, 0, 0, 1
+        });
+    }
+
 }

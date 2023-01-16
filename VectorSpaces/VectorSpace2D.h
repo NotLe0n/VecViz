@@ -12,6 +12,7 @@ public:
     VectorSpace2D();
 
 public:
+    int GetDimension() override;
     void Draw() override;
     void Update() override;
     void AddVector(const DrawVector& vector) override;
@@ -24,7 +25,7 @@ private:
     void DrawXAxis();
     void DrawXAxisTicks();
     void DrawVectors();
-    void DrawAVector(DrawVector vector, const std::u16string& name, Color color);
+    void DrawAVector(DrawVector vector, const std::u16string& name, Color color, float t);
     Vector2 VecToWorldSpace(Vector2 pos, Camera2D cam);
     static Vector2 WorldVecToScreenSpace(Vector2 pos, Camera2D cam);
 };

@@ -3,7 +3,9 @@
 #include "FontManager.h"
 #include "fstream"
 #include "utils.h"
+#include "rlImGui.h"
 
+// Needs to be called after rlImGuiSetup()
 void FontManager::LoadFonts() {
     std::vector<int> notoGlyphs = ParseGlyphFile(NotoGlyphsLocation);
     std::vector<int> freeSerifGlyphs = ParseGlyphFile(FreeSerifGlyphsLocation);
@@ -13,6 +15,16 @@ void FontManager::LoadFonts() {
 
     SetTextureFilter(font.texture, TEXTURE_FILTER_BILINEAR);
 	SetTextureFilter(mathFont.texture, TEXTURE_FILTER_BILINEAR);
+
+    ImGuiIO& io = ImGui::GetIO();
+    ImFontConfig config;
+    config.GlyphOffset.y -= 1;
+
+    ImFont* noto = io.Fonts->AddFontFromFileTTF("Fonts/NotoSans.ttf", 18, &config);
+    io.FontDefault = noto;
+    io.Fonts->Build(); // required
+
+    rlImGuiReloadFonts(); // required
 }
 
 std::vector<int> FontManager::ParseGlyphFile(const std::string& path) {

@@ -14,6 +14,10 @@ VectorSpace2D::VectorSpace2D() {
     camera.offset = {(GetScreenWidth() - 300) / 2.0f , GetScreenHeight() / 2.0f};
 }
 
+int VectorSpace2D::GetDimension() {
+    return 2;
+}
+
 void VectorSpace2D::Update() {
     // dragging code
     if (IsMouseButtonDown(MOUSE_BUTTON_MIDDLE)) {
@@ -33,11 +37,11 @@ void VectorSpace2D::Update() {
         Vector2 mouseWorldPos = GetScreenToWorld2D(rtMousePos, camera);
 
         // Set the offset to where the mouse is
-        camera.offset = Vector2Subtract(rtMousePos, {drawOffset, 0});
+        camera.offset = Vector2Subtract(rtMousePos, drawOffset);
 
         // Set the target to match, so that the camera maps the world space point
         // under the cursor to the screen space point under the cursor at any zoom
-        camera.target = Vector2Subtract(mouseWorldPos, {drawOffset / camera.zoom, 0});
+        camera.target = Vector2Subtract(mouseWorldPos, Vector2Scale(drawOffset, 1 / camera.zoom));
 
         // Zoom increment
         camera.zoom = Clamp(camera.zoom + wheel * 2, 25, 300);
@@ -51,17 +55,7 @@ float labelFontSize;
 void DrawDebugInfo();
 
 void VectorSpace2D::Draw() {
-    BasisX.vector = {1, 0, 0};
-    BasisY.vector = {0, 1, 0};
-
-    ApplyTransformation(Matrix{
-            2, 0, 0, 0,
-            0, 1, 0, 0,
-            0, 0, 0, 0,
-            0, 0, 0, 0
-    });
-
-    worldStart = VecToWorldSpace({drawOffset, 0}, camera);
+    worldStart = VecToWorldSpace(drawOffset, camera);
     worldEnd = VecToWorldSpace({(float)GetScreenWidth(), (float)GetScreenHeight()}, camera);
     labelFontSize = sqrtf(camera.zoom * 3);
     if (labelFontSize > 48) {
@@ -82,7 +76,7 @@ void VectorSpace2D::Draw() {
         }
         EndMode2D();
 
-        DrawTexture(textTexture.texture, -drawOffset, 0, WHITE);
+        DrawTexture(textTexture.texture, -drawOffset.x, -drawOffset.y, WHITE);
     }
     EndTextureMode();
 
@@ -97,14 +91,10 @@ void VectorSpace2D::AddVector(const DrawVector& vector) {
 }
 
 void VectorSpace2D::ApplyTransformation(Matrix transformationMatrix) {
-    BasisX.vector = {
-        BasisX.X() * transformationMatrix.m0 + BasisX.Y() * transformationMatrix.m4,
-        BasisX.X() * transformationMatrix.m1 + BasisX.Y() * transformationMatrix.m5, 0
-    };
-    BasisY.vector = {
-        BasisY.X() * transformationMatrix.m0 + BasisY.Y() * transformationMatrix.m4,
-        BasisY.X() * transformationMatrix.m1 + BasisY.Y() * transformationMatrix.m5, 0
-    };
+    this->transformationMatrix = transformationMatrix;
+
+    BasisX.vector = { transformationMatrix.m0, transformationMatrix.m1, 0 };
+    BasisY.vector = { transformationMatrix.m4, transformationMatrix.m5, 0 };
 }
 
 /*void DrawDebugInfo() {
@@ -187,31 +177,33 @@ void VectorSpace2D::DrawXAxisTicks() {
 }
 
 Vector2 VectorSpace2D::VecToWorldSpace(Vector2 pos, Camera2D cam) {
-    return GetScreenToWorld2D({pos.x - drawOffset, GetRealWindowHeight() - pos.y}, cam);
+    return GetScreenToWorld2D({pos.x - drawOffset.x, GetRealWindowHeight() - pos.y - drawOffset.y}, cam);
 }
 Vector2 VectorSpace2D::WorldVecToScreenSpace(Vector2 pos, Camera2D cam) {
     Vector2 trans = GetWorldToScreen2D(pos, cam);
-    return {trans.x + drawOffset, GetRealWindowHeight() - trans.y};
+    return {trans.x + drawOffset.x, GetRealWindowHeight() - trans.y - drawOffset.y};
 }
 
 void VectorSpace2D::DrawVectors() {
-    DrawAVector(BasisX, u"\U000000EE", GRAY); // i with hat
-    DrawAVector(BasisY, u"\U00000135", GRAY); // j with hat
+    DrawAVector(BasisX, u"\U000000EE", GRAY, 0); // i with hat
+    DrawAVector(BasisY, u"\U00000135", GRAY, 0); // j with hat
 
     for (int i = 0; i < vectors.size(); i++) {
-        DrawAVector(vectors[i], u"\U0001D463" + FontManager::NumToSubscript(i), vectors[i].color); // v with subscript vector index
+        DrawAVector(vectors[i], u"\U0001D463" + FontManager::NumToSubscript(i), vectors[i].color, t); // v with subscript vector index
     }
 }
 
-void VectorSpace2D::DrawAVector(DrawVector vector, const std::u16string& name, Color color) {
+void VectorSpace2D::DrawAVector(DrawVector vector, const std::u16string& name, Color color, float t) {
+    Vector2 transformedPos = Vector2Transform({vector.vector.x, vector.vector.y}, MatrixLerp(transformationMatrix, t));
+
     // draw vector point
-    DrawCircleV({vector.vector.x, vector.vector.y}, 3 / camera.zoom, color);
+    DrawCircleV(transformedPos, 3 / camera.zoom, color);
 
     // draw vector arrow
-    Drawing::DrawArrow2D({vector.vector.x, vector.vector.y}, {vector.origin.x, vector.origin.y}, 10 / camera.zoom, color);
+    Drawing::DrawArrow2D(transformedPos, {vector.origin.x, vector.origin.y}, 10 / camera.zoom, color);
 
-    Drawing::DrawToOtherRt(camera, rt, textTexture, [&name, &vector, &color] {
-        Vector2 screenPos = VectorSpace2D::WorldVecToScreenSpace({vector.vector.x, vector.vector.y}, camera);
+    Drawing::DrawToOtherRt(camera, rt, textTexture, [&name, &vector, &transformedPos, &color] {
+        Vector2 screenPos = VectorSpace2D::WorldVecToScreenSpace(transformedPos, camera);
         Vector2 labelPosition = {screenPos.x + .1f * camera.zoom, screenPos.y - .2f * camera.zoom};
 
         // Draw vector name
