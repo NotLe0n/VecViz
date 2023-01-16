@@ -3,7 +3,7 @@
 #include "../Drawing.h"
 #include "../UI/UIWindow.h"
 #include "codecvt"
-#include "format"
+//#include "format"
 #include "../utils.h"
 
 Camera2D camera;
@@ -88,7 +88,7 @@ void VectorSpace2D::Draw() {
 
     BeginTextureMode(textTexture);
     ClearBackground({0, 0, 0, 0});
-    DrawDebugInfo();
+   // DrawDebugInfo();
     EndTextureMode();
 }
 
@@ -107,7 +107,7 @@ void VectorSpace2D::ApplyTransformation(Matrix transformationMatrix) {
     };
 }
 
-void DrawDebugInfo() {
+/*void DrawDebugInfo() {
     Drawing::DrawText(
             std::format("Monitor dim: [{}, {}]\nMonitor pysical dim: [{}, {}]\nScreen dim: [{}, {}]\nRender dim: [{}, {}]\nWindow scale DPI: [{}, {}]\ndrawOffset: {}",
                         GetMonitorWidth(GetCurrentMonitor()),
@@ -122,7 +122,7 @@ void DrawDebugInfo() {
                         GetWindowScaleDPI().y,
                         VectorSpace::drawOffset),
                         VectorSpace::drawOffset, 0, YELLOW, 20);
-}
+}*/
 
 void VectorSpace2D::DrawOrigGrid() {
     for (int i = (int)worldStart.y; i > worldEnd.y; i--) {
@@ -220,6 +220,6 @@ void VectorSpace2D::DrawAVector(DrawVector vector, const std::u16string& name, C
         Drawing::DrawMathText(utf8_name, labelPosition.x, labelPosition.y, color, labelFontSize * 2);
 
         // Draw position label
-        Drawing::DrawText(std::format("({}, {})", vector.X(), vector.Y()), labelPosition.x + 2, labelPosition.y + .35f * camera.zoom, color, labelFontSize);
+        Drawing::DrawText("("+ std::to_string(vector.X()) + ", " + std::to_string(vector.Y()) + ")", labelPosition.x + 2, labelPosition.y + .35f * camera.zoom, color, labelFontSize);
     });
 }
