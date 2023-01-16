@@ -5,6 +5,7 @@
 UIWindow::UIWindow(const std::string& title, const Color& backgroundColor, const ConfigFlags& flags)
     : backgroundColor(backgroundColor)
 {
+    SetWindowState(FLAG_MSAA_4X_HINT);
     InitWindow(800, 600, title.c_str());
     SetWindowState(flags | FLAG_WINDOW_HIDDEN);
     MaximizeWindow();
@@ -26,6 +27,9 @@ void UIWindow::Draw(const std::function<void()>& drawFunc) {
     #endif
 
     rlImGuiSetup(true);
+
+    ImGuiIO& io = ImGui::GetIO();
+    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
     while (!WindowShouldClose()) {
         BeginDrawing();

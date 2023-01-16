@@ -8,8 +8,11 @@ void FontManager::LoadFonts() {
     std::vector<int> notoGlyphs = ParseGlyphFile(NotoGlyphsLocation);
     std::vector<int> freeSerifGlyphs = ParseGlyphFile(FreeSerifGlyphsLocation);
 
+    font = LoadFontEx(NotoFontLocation, 128, notoGlyphs.data(), (int)notoGlyphs.size());
     mathFont = LoadFontEx(FreeSerifFontLocation, 64, freeSerifGlyphs.data(), (int)freeSerifGlyphs.size());
-    font = LoadFontEx(NotoFontLocation, 64, notoGlyphs.data(), (int)notoGlyphs.size());
+
+    SetTextureFilter(font.texture, TEXTURE_FILTER_BILINEAR);
+	SetTextureFilter(mathFont.texture, TEXTURE_FILTER_BILINEAR);
 }
 
 std::vector<int> FontManager::ParseGlyphFile(const std::string& path) {

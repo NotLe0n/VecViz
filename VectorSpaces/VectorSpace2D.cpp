@@ -33,11 +33,11 @@ void VectorSpace2D::Update() {
         Vector2 mouseWorldPos = GetScreenToWorld2D(rtMousePos, camera);
 
         // Set the offset to where the mouse is
-        camera.offset = Vector2Subtract(rtMousePos, {300, 0});
+        camera.offset = Vector2Subtract(rtMousePos, {drawOffset, 0});
 
         // Set the target to match, so that the camera maps the world space point
         // under the cursor to the screen space point under the cursor at any zoom
-        camera.target = Vector2Subtract(mouseWorldPos, {300 / camera.zoom, 0});
+        camera.target = Vector2Subtract(mouseWorldPos, {drawOffset / camera.zoom, 0});
 
         // Zoom increment
         camera.zoom = Clamp(camera.zoom + wheel * 2, 25, 300);
@@ -61,8 +61,8 @@ void VectorSpace2D::Draw() {
             0, 0, 0, 0
     });
 
-    worldStart = VecToWorldSpace({300, 0}, camera);
-    worldEnd = VecToWorldSpace({static_cast<float>(GetScreenWidth()), static_cast<float>(GetScreenHeight())}, camera);
+    worldStart = VecToWorldSpace({drawOffset, 0}, camera);
+    worldEnd = VecToWorldSpace({(float)GetScreenWidth(), (float)GetScreenHeight()}, camera);
     labelFontSize = sqrtf(camera.zoom * 3);
     if (labelFontSize > 48) {
         labelFontSize = 48;
@@ -81,10 +81,15 @@ void VectorSpace2D::Draw() {
             DrawVectors();
         }
         EndMode2D();
+
+        DrawTexture(textTexture.texture, -drawOffset, 0, WHITE);
     }
     EndTextureMode();
 
+    BeginTextureMode(textTexture);
+    ClearBackground({0, 0, 0, 0});
     DrawDebugInfo();
+    EndTextureMode();
 }
 
 void VectorSpace2D::AddVector(const DrawVector& vector) {
@@ -104,7 +109,7 @@ void VectorSpace2D::ApplyTransformation(Matrix transformationMatrix) {
 
 void DrawDebugInfo() {
     Drawing::DrawText(
-            std::format("Monitor dim: [{}, {}]\nMonitor pysical dim: [{}, {}]\nScreen dim: [{}, {}]\nRender dim: [{}, {}]\nWindow scale DPI: [{}, {}]",
+            std::format("Monitor dim: [{}, {}]\nMonitor pysical dim: [{}, {}]\nScreen dim: [{}, {}]\nRender dim: [{}, {}]\nWindow scale DPI: [{}, {}]\ndrawOffset: {}",
                         GetMonitorWidth(GetCurrentMonitor()),
                         GetMonitorHeight(GetCurrentMonitor()),
                         GetMonitorPhysicalWidth(GetCurrentMonitor()),
@@ -114,8 +119,9 @@ void DrawDebugInfo() {
                         GetRenderWidth(),
                         GetRenderHeight(),
                         GetWindowScaleDPI().x,
-                        GetWindowScaleDPI().y),
-                        0, 0, YELLOW, 20);
+                        GetWindowScaleDPI().y,
+                        VectorSpace::drawOffset),
+                        VectorSpace::drawOffset, 0, YELLOW, 20);
 }
 
 void VectorSpace2D::DrawOrigGrid() {
@@ -146,7 +152,7 @@ void VectorSpace2D::DrawYAxisTicks() {
         DrawLineV(a, b, WHITE);
 
         // Draw X axis tick labels
-        Drawing::DrawOutsideOfRt(camera, rt, [&i, &b] {
+        Drawing::DrawToOtherRt(camera, rt, textTexture, [&i, &b] {
             Vector2 pos = VectorSpace2D::WorldVecToScreenSpace(b, camera);
             Drawing::DrawText(std::to_string(i), pos, WHITE, labelFontSize);
         });
@@ -173,7 +179,7 @@ void VectorSpace2D::DrawXAxisTicks() {
 
         // Draw X axis tick labels
         if (i == 0) continue;
-        Drawing::DrawOutsideOfRt(camera, rt, [&i, &b] {
+        Drawing::DrawToOtherRt(camera, rt, textTexture, [&i, &b] {
             Vector2 pos = VectorSpace2D::WorldVecToScreenSpace(b, camera);
             Drawing::DrawText(std::to_string(i), pos, WHITE, labelFontSize);
         });
@@ -181,11 +187,11 @@ void VectorSpace2D::DrawXAxisTicks() {
 }
 
 Vector2 VectorSpace2D::VecToWorldSpace(Vector2 pos, Camera2D cam) {
-    return GetScreenToWorld2D({pos.x - 300, GetRealWindowHeight() - pos.y}, cam);
+    return GetScreenToWorld2D({pos.x - drawOffset, GetRealWindowHeight() - pos.y}, cam);
 }
 Vector2 VectorSpace2D::WorldVecToScreenSpace(Vector2 pos, Camera2D cam) {
     Vector2 trans = GetWorldToScreen2D(pos, cam);
-    return {trans.x + 300, GetRealWindowHeight() - trans.y};
+    return {trans.x + drawOffset, GetRealWindowHeight() - trans.y};
 }
 
 void VectorSpace2D::DrawVectors() {
@@ -204,17 +210,14 @@ void VectorSpace2D::DrawAVector(DrawVector vector, const std::u16string& name, C
     // draw vector arrow
     Drawing::DrawArrow2D({vector.vector.x, vector.vector.y}, {vector.origin.x, vector.origin.y}, 10 / camera.zoom, color);
 
-    Drawing::DrawOutsideOfRt(camera, rt, [&name, &vector, &color] {
+    Drawing::DrawToOtherRt(camera, rt, textTexture, [&name, &vector, &color] {
         Vector2 screenPos = VectorSpace2D::WorldVecToScreenSpace({vector.vector.x, vector.vector.y}, camera);
         Vector2 labelPosition = {screenPos.x + .1f * camera.zoom, screenPos.y - .2f * camera.zoom};
 
         // Draw vector name
-        std::wstring_convert<std::codecvt_utf8_utf16<char16_t>,char16_t> convert;
+        std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> convert;
         std::string utf8_name = convert.to_bytes(name);
-        Drawing::DrawMathText(utf8_name, labelPosition.x, labelPosition.y, color, 24);
-
-        // Draw arrow above vector name
-        Drawing::DrawUnicodeMathChar(0x2192, labelPosition.x, labelPosition.y - 8, color, 18);
+        Drawing::DrawMathText(utf8_name, labelPosition.x, labelPosition.y, color, labelFontSize * 2);
 
         // Draw position label
         Drawing::DrawText(std::format("({}, {})", vector.X(), vector.Y()), labelPosition.x + 2, labelPosition.y + .35f * camera.zoom, color, labelFontSize);

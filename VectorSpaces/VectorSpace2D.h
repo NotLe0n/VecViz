@@ -5,6 +5,9 @@
 #include "VectorSpace.h"
 
 class VectorSpace2D : public VectorSpace {
+private:
+    RenderTexture textTexture = LoadRenderTexture(rt.texture.width, rt.texture.height);
+
 public:
     VectorSpace2D();
 

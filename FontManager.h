@@ -2,6 +2,7 @@
 #define VECVIZ_FONTMANAGER_H
 
 #include "raylib.h"
+#include "imgui.h"
 
 class FontManager {
     static constexpr auto NotoFontLocation = "./Fonts/NotoSans.ttf";

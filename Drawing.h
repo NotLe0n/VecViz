@@ -8,16 +8,17 @@
 
 class Drawing {
 public:
-    static void DrawOutsideOfRt(Camera2D camera, RenderTexture rt, const std::function<void()>& drawFunc){
-        BeginScissorMode(300, 0, rt.texture.width, rt.texture.height);
+    static void
+    DrawToOtherRt(Camera2D camera, RenderTexture rt, RenderTexture otherRt, const std::function<void()> &drawFunc) {
         EndMode2D();
         EndTextureMode();
+        BeginTextureMode(otherRt);
 
         drawFunc();
 
+        EndTextureMode();
         BeginTextureMode(rt);
         BeginMode2D(camera);
-        EndScissorMode();
     }
 
     static void DrawArrow2D(Vector2 pos, Vector2 origin, float arrowLength, Color color) {
@@ -53,14 +54,6 @@ public:
 
     static void DrawMathText(const std::string& text, const float& posX, const float& posY, const Color& color, const float& size) {
         DrawTextEx(FontManager::mathFont, text.c_str(), {posX, posY}, size, 0, color);
-    }
-
-    /*void FontManager::DrawUnicodeMathText(const int *text, int count, const float &posX, const float &posY, const Color &color, const float &size) {
-        DrawTextCodepoints(mathFont, text, count, {posX, posY}, size, 0, color);
-    }*/
-
-    static void DrawUnicodeMathChar(const int& text, const float &posX, const float &posY, const Color &color, const float &size) {
-        DrawTextCodepoint(FontManager::mathFont, text, {posX, posY}, size, color);
     }
 };
 

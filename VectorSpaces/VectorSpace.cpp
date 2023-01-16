@@ -1,7 +1,11 @@
 #include "VectorSpace.h"
 
-void VectorSpace::Render() {
-    DrawTexture(rt.texture, 300, 0, WHITE); // draw render texture
-    Update(); // update camera
-    Draw(); // draw to render texture (and text outside of it)
+float VectorSpace::drawOffset = 0;
+
+RenderTexture* VectorSpace::GetRenderTexture() {
+    return &rt;
+}
+
+std::vector<DrawVector> VectorSpace::GetVectors() {
+    return vectors;
 }
