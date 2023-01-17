@@ -26,7 +26,6 @@ public:
     virtual int GetDimension() = 0;
     virtual void Draw() = 0;
     virtual void Update() = 0;
-    virtual void AddVector(const DrawVector& vector) = 0;
     virtual void ApplyTransformation(Matrix transformationMatrix) = 0;
     RenderTexture* GetRenderTexture();
 };

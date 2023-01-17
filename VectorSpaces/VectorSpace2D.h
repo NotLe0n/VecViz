@@ -15,7 +15,6 @@ public:
     int GetDimension() override;
     void Draw() override;
     void Update() override;
-    void AddVector(const DrawVector& vector) override;
     void ApplyTransformation(Matrix transformationMatrix) override;
 
 private:

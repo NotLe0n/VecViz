@@ -1,7 +1,6 @@
 #include "DrawVector.h"
 #include "raymath.h"
 
-int DrawVector::vectorIndex = 0;
 int DrawVector::vectorCount = 0;
 
 DrawVector::DrawVector(float x, float y, float z)

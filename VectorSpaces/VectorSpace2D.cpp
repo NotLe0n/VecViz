@@ -31,17 +31,17 @@ void VectorSpace2D::Update() {
     float wheel = GetMouseWheelMove();
     if (wheel != 0) {
         Vector2 rtMousePos = GetMousePosition();
-        rtMousePos.y = GetMonitorHeight(GetCurrentMonitor()) - rtMousePos.y;
+        rtMousePos.y = GetMonitorHeight(GetCurrentMonitor()) - rtMousePos.y - drawOffset.y;
 
         // Get the world point that is under the mouse
         Vector2 mouseWorldPos = GetScreenToWorld2D(rtMousePos, camera);
 
         // Set the offset to where the mouse is
-        camera.offset = Vector2Subtract(rtMousePos, drawOffset);
+        camera.offset = Vector2Subtract(rtMousePos, {drawOffset.x, -drawOffset.y});
 
         // Set the target to match, so that the camera maps the world space point
         // under the cursor to the screen space point under the cursor at any zoom
-        camera.target = Vector2Subtract(mouseWorldPos, Vector2Scale(drawOffset, 1 / camera.zoom));
+        camera.target = Vector2Subtract(mouseWorldPos, Vector2Scale({drawOffset.x, -drawOffset.y}, 1 / camera.zoom));
 
         // Zoom increment
         camera.zoom = Clamp(camera.zoom + wheel * 2, 25, 300);
@@ -52,10 +52,10 @@ Vector2 worldStart;
 Vector2 worldEnd;
 float labelFontSize;
 
-void DrawDebugInfo();
+//void DrawDebugInfo();
 
 void VectorSpace2D::Draw() {
-    worldStart = VecToWorldSpace(drawOffset, camera);
+    worldStart = VecToWorldSpace({drawOffset.x, -drawOffset.y}, camera);
     worldEnd = VecToWorldSpace({(float)GetScreenWidth(), (float)GetScreenHeight()}, camera);
     labelFontSize = sqrtf(camera.zoom * 3);
     if (labelFontSize > 48) {
@@ -81,13 +81,10 @@ void VectorSpace2D::Draw() {
 
     BeginTextureMode(textTexture);
     ClearBackground({0, 0, 0, 0});
-    DrawDebugInfo();
+    //DrawDebugInfo();
     EndTextureMode();
 }
 
-void VectorSpace2D::AddVector(const DrawVector& vector) {
-    this->vectors.push_back(vector);
-}
 
 void VectorSpace2D::ApplyTransformation(Matrix transformationMatrix) {
     this->transformationMatrix = transformationMatrix;
@@ -96,7 +93,7 @@ void VectorSpace2D::ApplyTransformation(Matrix transformationMatrix) {
     BasisY.vector = { transformationMatrix.m4, transformationMatrix.m5, 0 };
 }
 
-void DrawDebugInfo() {
+/*void DrawDebugInfo() {
     std::stringstream stringBuilder;
     stringBuilder.precision(3);
     stringBuilder <<
@@ -107,7 +104,7 @@ void DrawDebugInfo() {
     "Window scale DPI: [" << GetWindowScaleDPI().x << ", " << GetWindowScaleDPI().y << "]\n";
 
     Drawing::DrawText(stringBuilder.str(), VectorSpace::drawOffset.x, 0, YELLOW, 20);
-}
+}*/
 
 void VectorSpace2D::DrawOrigGrid() {
     for (int i = (int)worldStart.y; i > worldEnd.y; i--) {

@@ -6,9 +6,9 @@
 class DrawVector {
 private:
     static int vectorCount;
-    static int vectorIndex;
 
 public:
+    int vectorIndex = 0;
     Vector3 vector;
     Vector3 origin;
     Color color{};

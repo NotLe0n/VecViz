@@ -2,8 +2,6 @@
 #define VECVIZ_DRAWING_H
 
 #include "functional"
-#include "raylib.h"
-#include "raymath.h"
 #include "FontManager.h"
 
 class Drawing {

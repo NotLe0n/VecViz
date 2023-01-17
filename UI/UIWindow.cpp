@@ -57,7 +57,7 @@ void StyleImGui() {
     colors[ImGuiCol_TabUnfocused]           = ImVec4(0.00f, 0.00f, 0.00f, 0.52f);
     colors[ImGuiCol_TabUnfocusedActive]     = ImVec4(0.25f, 0.31f, 0.38f, 0.43f);
     colors[ImGuiCol_DockingPreview]         = ImVec4(0.25f, 0.27f, 0.29f, 1.00f);
-    colors[ImGuiCol_DockingEmptyBg]         = ImVec4(0.13f, 0.16f, 0.16f, 1.00f);
+    colors[ImGuiCol_DockingEmptyBg]         = ImVec4(0.05f, 0.05f, 0.05f, 1.00f);
     colors[ImGuiCol_PlotLines]              = ImVec4(0.43f, 0.73f, 0.76f, 1.00f);
     colors[ImGuiCol_PlotLinesHovered]       = ImVec4(0.15f, 0.36f, 0.69f, 1.00f);
     colors[ImGuiCol_PlotHistogram]          = ImVec4(0.43f, 0.73f, 0.76f, 1.00f);
@@ -73,6 +73,7 @@ void StyleImGui() {
     colors[ImGuiCol_NavWindowingHighlight]  = ImVec4(1.00f, 1.00f, 1.00f, 0.70f);
     colors[ImGuiCol_NavWindowingDimBg]      = ImVec4(1.00f, 1.00f, 1.00f, 0.20f);
     colors[ImGuiCol_ModalWindowDimBg]       = ImVec4(1.00f, 1.00f, 1.00f, 0.35f);
+
 
     ImGuiStyle& style = ImGui::GetStyle();
     style.FrameRounding = 5;
