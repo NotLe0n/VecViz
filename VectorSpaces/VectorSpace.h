@@ -10,7 +10,7 @@ public:
     static Vector2 drawOffset;
 
 protected:
-    RenderTexture rt = LoadRenderTexture(GetScreenWidth(), GetScreenHeight());
+    RenderTexture rt = LoadRenderTexture(GetMonitorWidth(GetCurrentMonitor()), GetMonitorHeight(GetCurrentMonitor()));
 
 public:
     float t = 0; // Transformation percentage

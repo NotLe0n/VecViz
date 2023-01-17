@@ -7,9 +7,8 @@ UIWindow::UIWindow(const std::string& title, const Color& backgroundColor, const
 {
     SetWindowState(FLAG_MSAA_4X_HINT);
     InitWindow(800, 600, title.c_str());
-    SetWindowState(flags | FLAG_WINDOW_HIDDEN);
+    SetWindowState(flags);
     MaximizeWindow();
-    ClearWindowState(FLAG_WINDOW_HIDDEN);
 }
 
 UIWindow &UIWindow::GetWindow() {

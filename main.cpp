@@ -6,11 +6,13 @@
 #include "raymath.h"
 #include "FontManager.h"
 #include "imgui_internal.h"
+#include <memory>
 
 void UpdateDrawFrame();
 void DrawSideBar();
 
-VectorSpace* currentVs = nullptr;
+
+std::unique_ptr<VectorSpace> currentVs; // temporary TODO: put in main and pass reference
 
 int main()
 {
@@ -18,13 +20,12 @@ int main()
     UIWindow& wnd = UIWindow::GetWindow();
 
     // Temporary until VS selection is implemented
-    currentVs = new VectorSpace2D();
+    currentVs = std::make_unique<VectorSpace2D>(VectorSpace2D());
     currentVs->AddVector(DrawVector{2, 4});
     currentVs->AddVector(DrawVector{sqrtf(2), 3});
     currentVs->AddVector(DrawVector{-10, -7});
 
     wnd.Draw(UpdateDrawFrame);
-
     return 0;
 }
 
@@ -44,7 +45,9 @@ void UpdateDrawFrame()
     ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
     if (ImGui::Begin("Vectorspace view"), 0, ImGuiWindowFlags_NoDocking) {
         Texture *renderTexture = &currentVs->GetRenderTexture()->texture;
-        rlImGuiImageRect(renderTexture, ImGui::GetWindowWidth(), ImGui::GetWindowHeight() - ImGui::GetFrameHeight(), {0, 0, ImGui::GetWindowWidth(), ImGui::GetWindowHeight() - ImGui::GetFrameHeight()});
+        float rtw = ImGui::GetWindowWidth();
+        float rth = ImGui::GetWindowHeight() - ImGui::GetFrameHeight();
+		rlImGuiImageRect(renderTexture, rtw, rth, {0, 0, rtw, rth});
 
         VectorSpace::drawOffset = {ImGui::GetWindowPos().x, ImGui::GetWindowPos().y};
         if (ImGui::IsWindowHovered()) {
@@ -116,5 +119,4 @@ void DrawSideBar() {
             0, 0, 0, 1
         });
     }
-
 }
