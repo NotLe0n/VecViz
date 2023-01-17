@@ -11,7 +11,6 @@
 void UpdateDrawFrame();
 void DrawSideBar();
 
-
 std::unique_ptr<VectorSpace> currentVs; // temporary TODO: put in main and pass reference
 
 int main()
@@ -71,6 +70,7 @@ void UpdateDrawFrame()
 }
 
 float transformMatrixVals[9] = { 1, 0, 0, 0, 1, 0, 0, 0, 1, };
+bool sinusMode;
 void DrawSideBar() {
     ImGui::InputFloat2("Vector", addVectorVals);
     if (ImGui::Button("Add Vector")) {
@@ -85,12 +85,12 @@ void DrawSideBar() {
             ImGui::Text("v%d:", n);
             ImGui::SameLine();
 
-            ImGui::SetNextItemWidth(100);
+            ImGui::SetNextItemWidth(200);
             std::string xlabel = std::string("##VectorInputX") + std::to_string(n);
             ImGui::InputFloat(xlabel.c_str(), &currentVs->vectors[n].vector.x, 1);
 
             ImGui::SameLine();
-            ImGui::SetNextItemWidth(100);
+            ImGui::SetNextItemWidth(200);
             std::string ylabel = std::string("##VectorInputY") + std::to_string(n);
             ImGui::InputFloat(ylabel.c_str(), &currentVs->vectors[n].vector.y, 1);
         }
@@ -99,6 +99,12 @@ void DrawSideBar() {
     ImGui::Separator();
     ImGui::Text("Transformation percentage:");
     ImGui::SliderFloat("##tValue", &currentVs->t, 0, 1);
+    ImGui::SameLine();
+    ImGui::Checkbox("Sinus mode", &sinusMode);
+
+    if (sinusMode) {
+        currentVs->t = (sinf(GetTime()) +1) / 2;
+    }
 
     ImGui::Text("Transformation matrix:");
     for (int i = 0; i < currentVs->GetDimension(); ++i) {

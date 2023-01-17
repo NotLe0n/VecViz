@@ -4,6 +4,7 @@
 #include "fstream"
 #include "utils.h"
 #include "rlImGui.h"
+#include "raymath.h"
 
 // Needs to be called after rlImGuiSetup()
 void FontManager::LoadFonts() {
@@ -20,7 +21,8 @@ void FontManager::LoadFonts() {
     ImFontConfig config;
     config.GlyphOffset.y -= 1;
 
-    ImFont* noto = io.Fonts->AddFontFromFileTTF("Fonts/NotoSans.ttf", 18, &config);
+    float dpi = sqrtf(GetWindowScaleDPI().x);
+    ImFont* noto = io.Fonts->AddFontFromFileTTF("Fonts/NotoSans.ttf", 18 * dpi, &config);
     io.FontDefault = noto;
     io.Fonts->Build(); // required
 

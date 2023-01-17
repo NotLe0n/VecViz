@@ -3,8 +3,8 @@
 #include "../Drawing.h"
 #include "../UI/UIWindow.h"
 #include "codecvt"
-//#include "format"
 #include "../utils.h"
+#include <sstream>
 
 Camera2D camera;
 
@@ -67,7 +67,6 @@ void VectorSpace2D::Draw() {
         ClearBackground(UIWindow::GetWindow().GetBackgroundColor());
         BeginMode2D(camera);
         {
-            //DrawRectangle(0, 0, 1, 1, RED);
             DrawOrigGrid();
             DrawYAxis();
             DrawXAxis();
@@ -82,7 +81,7 @@ void VectorSpace2D::Draw() {
 
     BeginTextureMode(textTexture);
     ClearBackground({0, 0, 0, 0});
-   // DrawDebugInfo();
+    DrawDebugInfo();
     EndTextureMode();
 }
 
@@ -97,22 +96,18 @@ void VectorSpace2D::ApplyTransformation(Matrix transformationMatrix) {
     BasisY.vector = { transformationMatrix.m4, transformationMatrix.m5, 0 };
 }
 
-/*void DrawDebugInfo() {
-    Drawing::DrawText(
-            std::format("Monitor dim: [{}, {}]\nMonitor pysical dim: [{}, {}]\nScreen dim: [{}, {}]\nRender dim: [{}, {}]\nWindow scale DPI: [{}, {}]\ndrawOffset: {}",
-                        GetMonitorWidth(GetCurrentMonitor()),
-                        GetMonitorHeight(GetCurrentMonitor()),
-                        GetMonitorPhysicalWidth(GetCurrentMonitor()),
-                        GetMonitorPhysicalHeight(GetCurrentMonitor()),
-                        GetScreenWidth(),
-                        GetScreenHeight(),
-                        GetRenderWidth(),
-                        GetRenderHeight(),
-                        GetWindowScaleDPI().x,
-                        GetWindowScaleDPI().y,
-                        VectorSpace::drawOffset),
-                        VectorSpace::drawOffset, 0, YELLOW, 20);
-}*/
+void DrawDebugInfo() {
+    std::stringstream stringBuilder;
+    stringBuilder.precision(3);
+    stringBuilder <<
+    "Monitor dim: [" << GetMonitorWidth(GetCurrentMonitor()) << ", " << GetMonitorHeight(GetCurrentMonitor()) << "]\n" <<
+    "Monitor pysical dim: [" << GetMonitorPhysicalWidth(GetCurrentMonitor()) << ", " << GetMonitorPhysicalHeight(GetCurrentMonitor()) << "]\n" <<
+    "Screen dim: [" << GetScreenWidth() << ", " << GetScreenHeight() << "]\n" <<
+    "Render dim: [" << GetRenderWidth() << ", " << GetRenderHeight() << "]\n" <<
+    "Window scale DPI: [" << GetWindowScaleDPI().x << ", " << GetWindowScaleDPI().y << "]\n";
+
+    Drawing::DrawText(stringBuilder.str(), VectorSpace::drawOffset.x, 0, YELLOW, 20);
+}
 
 void VectorSpace2D::DrawOrigGrid() {
     for (int i = (int)worldStart.y; i > worldEnd.y; i--) {
@@ -212,6 +207,9 @@ void VectorSpace2D::DrawAVector(DrawVector vector, const std::u16string& name, C
         Drawing::DrawMathText(utf8_name, labelPosition.x, labelPosition.y, color, labelFontSize * 2);
 
         // Draw position label
-        Drawing::DrawText("("+ std::to_string(vector.X()) + ", " + std::to_string(vector.Y()) + ")", labelPosition.x + 2, labelPosition.y + .35f * camera.zoom, color, labelFontSize);
+        std::stringstream stringBuilder;
+        stringBuilder.precision(3);
+        stringBuilder << "(" << vector.X() << ", " << vector.Y() << ")";
+        Drawing::DrawText(stringBuilder.str(), labelPosition.x + 2, labelPosition.y + .35f * camera.zoom, color, labelFontSize);
     });
 }
