@@ -29,11 +29,35 @@ int main()
 }
 
 float addVectorVals[] = {0, 0};
+ImGuiID DockFullScreen() {
+    static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
+    ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
+
+    const ImGuiViewport* viewport = ImGui::GetMainViewport();
+    ImGui::SetNextWindowPos(viewport->WorkPos);
+    ImGui::SetNextWindowSize(viewport->WorkSize);
+    ImGui::SetNextWindowViewport(viewport->ID);
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+    window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+    window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+    ImGui::Begin("DockSpace Demo", nullptr, window_flags);
+    ImGui::PopStyleVar(3);
+
+    // Submit the DockSpace
+    ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
+    ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
+
+    return dockspace_id;
+}
+
 void UpdateDrawFrame()
 {
     rlImGuiBegin();
 
-    ImGuiID dock_id =ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
+    ImGuiID dock_id = DockFullScreen();
 
     if (ImGui::Begin("sidebar")) {
         DrawSideBar();
@@ -66,63 +90,98 @@ void UpdateDrawFrame()
 
     ImGui::ShowDemoWindow();
 
+    if (ImGui::BeginMenuBar())
+    {
+        if (ImGui::BeginMenu("New"))
+        {
+            ImGui::MenuItem("Test", nullptr);
+
+            ImGui::EndMenu();
+        }
+
+        if (ImGui::BeginMenu("Options"))
+        {
+            ImGui::MenuItem("Test", nullptr);
+
+            ImGui::EndMenu();
+        }
+
+        ImGui::EndMenuBar();
+    }
+
+    ImGui::End();
+
     rlImGuiEnd();
 }
 
 float transformMatrixVals[9] = { 1, 0, 0, 0, 1, 0, 0, 0, 1, };
 bool sinusMode;
 void DrawSideBar() {
-    ImGui::InputFloat2("Vector", addVectorVals);
-    if (ImGui::Button("Add Vector")) {
-        currentVs->AddVector(DrawVector{addVectorVals[0], addVectorVals[1]});
-    }
+    ImGui::Begin("Vectors");
+    {
+        float numberInputWidth = ImGui::CalcTextSize("8.888").x;
 
-    ImGui::Separator();
+        ImGui::SetNextItemWidth(numberInputWidth + 100);
+        ImGui::InputFloat2("##AddVectorInput", addVectorVals);
+        ImGui::SameLine();
 
-    ImGui::Text("Vectors: ");
-    if (ImGui::BeginListBox("vectors list:", ImVec2(-FLT_MIN, 10 * ImGui::GetTextLineHeightWithSpacing()))) {
-        for (int n = 0; n < currentVs->vectors.size(); n++) {
-            ImGui::Text("v%d:", n);
-            ImGui::SameLine();
-
-            ImGui::SetNextItemWidth(200);
-            std::string xlabel = std::string("##VectorInputX") + std::to_string(n);
-            ImGui::InputFloat(xlabel.c_str(), &currentVs->vectors[n].vector.x, 1);
-
-            ImGui::SameLine();
-            ImGui::SetNextItemWidth(200);
-            std::string ylabel = std::string("##VectorInputY") + std::to_string(n);
-            ImGui::InputFloat(ylabel.c_str(), &currentVs->vectors[n].vector.y, 1);
+        if (ImGui::Button("Add Vector")) {
+            currentVs->AddVector(DrawVector{addVectorVals[0], addVectorVals[1]});
         }
-        ImGui::EndListBox();
-    }
-    ImGui::Separator();
-    ImGui::Text("Transformation percentage:");
-    ImGui::SliderFloat("##tValue", &currentVs->t, 0, 1);
-    ImGui::SameLine();
-    ImGui::Checkbox("Sinus mode", &sinusMode);
 
-    if (sinusMode) {
-        currentVs->t = (sinf(GetTime()) +1) / 2;
-    }
+        if (ImGui::BeginListBox("##VectorList", ImVec2(400, 10 * ImGui::GetTextLineHeightWithSpacing()))) {
+            for (int n = 0; n < currentVs->vectors.size(); n++) {
+                ImGui::Text("v%d:", n);
+                ImGui::SameLine();
 
-    ImGui::Text("Transformation matrix:");
-    for (int i = 0; i < currentVs->GetDimension(); ++i) {
-        ImGui::SetNextItemWidth(80);
-        ImGui::InputFloat((std::string("##transformMatrix:") + std::to_string(i)).c_str(), &transformMatrixVals[i]);
-        for (int j = 1; j < currentVs->GetDimension(); ++j) {
-            ImGui::SameLine();
+                std::string xlabel = std::string("##VectorInputX") + std::to_string(n);
+                ImGui::SetNextItemWidth(numberInputWidth + 100);
+                ImGui::InputFloat(xlabel.c_str(), &currentVs->vectors[n].vector.x, 1);
+
+                ImGui::SameLine();
+
+                std::string ylabel = std::string("##VectorInputY") + std::to_string(n);
+                ImGui::SetNextItemWidth(numberInputWidth + 100);
+                ImGui::InputFloat(ylabel.c_str(), &currentVs->vectors[n].vector.y, 1);
+            }
+            ImGui::EndListBox();
+        }
+    }
+    ImGui::End();
+
+    ImGui::Begin("Transformations");
+    {
+        ImGui::Text("Transformation percentage:");
+        ImGui::SliderFloat("##tValue", &currentVs->t, 0, 1);
+        ImGui::SameLine();
+        ImGui::Checkbox("Sinus mode", &sinusMode);
+
+        if (sinusMode) {
+            currentVs->t = (sinf(GetTime()) + 1) / 2;
+        }
+
+        ImGui::Text("Transformation matrix:");
+        for (int i = 0; i < currentVs->GetDimension(); ++i) {
             ImGui::SetNextItemWidth(80);
-            ImGui::InputFloat((std::string("##transformMatrix:") + std::to_string(i+j*3)).c_str(), &transformMatrixVals[i+j*3]);
+            ImGui::InputFloat((std::string("##transformMatrix:") + std::to_string(i)).c_str(), &transformMatrixVals[i]);
+            for (int j = 1; j < currentVs->GetDimension(); ++j) {
+                ImGui::SameLine();
+                ImGui::SetNextItemWidth(80);
+                ImGui::InputFloat((std::string("##transformMatrix:") + std::to_string(i + j * 3)).c_str(), &transformMatrixVals[i + j * 3]);
+            }
+        }
+
+        if (ImGui::Button("Apply Transformation")) {
+            currentVs->ApplyTransformation({
+                transformMatrixVals[0], transformMatrixVals[3],
+                transformMatrixVals[6], 0,
+                transformMatrixVals[1], transformMatrixVals[4],
+                transformMatrixVals[7], 0,
+                transformMatrixVals[2], transformMatrixVals[5],
+                transformMatrixVals[8], 0,
+                0, 0, 0, 1
+            });
         }
     }
-
-    if (ImGui::Button("Apply Transformation")) {
-        currentVs->ApplyTransformation({
-            transformMatrixVals[0], transformMatrixVals[3], transformMatrixVals[6], 0,
-            transformMatrixVals[1], transformMatrixVals[4], transformMatrixVals[7], 0,
-            transformMatrixVals[2], transformMatrixVals[5], transformMatrixVals[8], 0,
-            0, 0, 0, 1
-        });
-    }
+    ImGui::End();
 }

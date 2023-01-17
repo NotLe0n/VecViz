@@ -31,7 +31,7 @@ void VectorSpace2D::Update() {
     float wheel = GetMouseWheelMove();
     if (wheel != 0) {
         Vector2 rtMousePos = GetMousePosition();
-        rtMousePos.y = (GetRealWindowHeight()) - rtMousePos.y;
+        rtMousePos.y = GetMonitorHeight(GetCurrentMonitor()) - rtMousePos.y;
 
         // Get the world point that is under the mouse
         Vector2 mouseWorldPos = GetScreenToWorld2D(rtMousePos, camera);
@@ -172,11 +172,11 @@ void VectorSpace2D::DrawXAxisTicks() {
 }
 
 Vector2 VectorSpace2D::VecToWorldSpace(Vector2 pos, Camera2D cam) {
-    return GetScreenToWorld2D({pos.x - drawOffset.x, GetRealWindowHeight() - pos.y - drawOffset.y}, cam);
+    return GetScreenToWorld2D({pos.x - drawOffset.x,  GetMonitorHeight(GetCurrentMonitor()) - pos.y - drawOffset.y}, cam);
 }
 Vector2 VectorSpace2D::WorldVecToScreenSpace(Vector2 pos, Camera2D cam) {
     Vector2 trans = GetWorldToScreen2D(pos, cam);
-    return {trans.x + drawOffset.x, GetRealWindowHeight() - trans.y - drawOffset.y};
+    return {trans.x + drawOffset.x,  GetMonitorHeight(GetCurrentMonitor()) - trans.y - drawOffset.y};
 }
 
 void VectorSpace2D::DrawVectors() {

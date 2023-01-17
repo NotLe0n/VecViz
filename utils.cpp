@@ -16,10 +16,6 @@ std::vector<std::string> split(std::string s, const std::string& del) {
     return std::move(result);
 }
 
-int GetRealWindowHeight() {
-    return GetMonitorHeight(GetCurrentMonitor()) - 63;
-}
-
 Matrix MatrixLerp(Matrix m, float t) {
     return {
             Lerp(1, m.m0, t), Lerp(0, m.m4, t), Lerp(0, m.m8, t), Lerp(0, m.m12, t),
