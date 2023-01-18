@@ -2,6 +2,7 @@
 
 Vector2 VectorSpace::drawOffset = {};
 
-RenderTexture* VectorSpace::GetRenderTexture() {
+RenderTexture* VectorSpace::GetRenderTexture()
+{
     return &rt;
 }

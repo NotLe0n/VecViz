@@ -27,7 +27,7 @@ bool DrawMenuBar(std::unique_ptr<VectorSpace>& currentVs)
 
             }
 
-            if (ImGui::MenuItem("Close all vector spaces")){
+            if (ImGui::MenuItem("Close all vector spaces")) {
                 currentVs.reset();
             }
 

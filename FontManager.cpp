@@ -7,15 +7,16 @@
 #include "raymath.h"
 
 // Needs to be called after rlImGuiSetup()
-void FontManager::LoadFonts() {
+void FontManager::LoadFonts()
+{
     std::vector<int> notoGlyphs = ParseGlyphFile(NotoGlyphsLocation);
     std::vector<int> freeSerifGlyphs = ParseGlyphFile(FreeSerifGlyphsLocation);
 
-    font = LoadFontEx(NotoFontLocation, 128, notoGlyphs.data(), (int)notoGlyphs.size());
-    mathFont = LoadFontEx(FreeSerifFontLocation, 64, freeSerifGlyphs.data(), (int)freeSerifGlyphs.size());
+    font = LoadFontEx(NotoFontLocation, 128, notoGlyphs.data(), (int) notoGlyphs.size());
+    mathFont = LoadFontEx(FreeSerifFontLocation, 64, freeSerifGlyphs.data(), (int) freeSerifGlyphs.size());
 
     SetTextureFilter(font.texture, TEXTURE_FILTER_BILINEAR);
-	SetTextureFilter(mathFont.texture, TEXTURE_FILTER_BILINEAR);
+    SetTextureFilter(mathFont.texture, TEXTURE_FILTER_BILINEAR);
 
     ImGuiIO& io = ImGui::GetIO();
     ImFontConfig config;
@@ -29,15 +30,17 @@ void FontManager::LoadFonts() {
     rlImGuiReloadFonts(); // required
 }
 
-void FontManager::UnloadFonts() {
+void FontManager::UnloadFonts()
+{
     UnloadFont(font);
     UnloadFont(mathFont);
 }
 
-std::vector<int> FontManager::ParseGlyphFile(const std::string& path) {
+std::vector<int> FontManager::ParseGlyphFile(const std::string& path)
+{
     std::ifstream t(path);
     if (!t.is_open()) {
-       throw std::runtime_error((std::string("Couldn't open ") + path).c_str());
+        throw std::runtime_error((std::string("Couldn't open ") + path).c_str());
     }
 
     std::stringstream buffer;
@@ -45,14 +48,15 @@ std::vector<int> FontManager::ParseGlyphFile(const std::string& path) {
 
     std::vector<std::string> glyphsStr = split(buffer.str(), ", ");
     std::vector<int> glyphs = std::vector<int>();
-    for (const auto &item: glyphsStr) {
+    for (const auto& item: glyphsStr) {
         glyphs.push_back(std::stoi(item));
     }
 
     return glyphs;
 }
 
-std::u16string FontManager::NumToSubscript(int n) {
+std::u16string FontManager::NumToSubscript(int n)
+{
     std::u16string s;
     do {
         int lastDigit = n % 10;
@@ -64,7 +68,8 @@ std::u16string FontManager::NumToSubscript(int n) {
     return s;
 }
 
-char16_t FontManager::ToSubscript(char16_t c) {
+char16_t FontManager::ToSubscript(char16_t c)
+{
     if (isdigit(c)) {
         return 0x2080 | c - '0';
     }

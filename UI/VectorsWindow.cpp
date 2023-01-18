@@ -46,7 +46,8 @@ void DrawVectorsWindow(std::unique_ptr<VectorSpace>& currentVs)
             for (int n = 0; n < currentVs->vectors.size(); n++) {
                 float selectableHeight = ImGui::GetTextLineHeightWithSpacing() + 10;
 
-                if (ImGui::Selectable(("##vector" + std::to_string(n)).c_str(), selectVectorList[n], 0, ImVec2(400, selectableHeight))) {
+                if (ImGui::Selectable(("##vector" + std::to_string(n)).c_str(), selectVectorList[n], 0,
+                                      ImVec2(400, selectableHeight))) {
                     bool state = !selectVectorList[n];
                     std::fill(selectVectorList.begin(), selectVectorList.end(), false);
                     selectVectorList[n] = state;

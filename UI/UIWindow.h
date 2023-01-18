@@ -15,14 +15,20 @@ private:
 
 public:
     UIWindow(UIWindow&&) = delete;
+
     UIWindow(UIWindow&) = delete;
+
     void operator=(const UIWindow&) = delete;
+
     void operator=(const UIWindow&&) = delete;
 
 public:
     static UIWindow& GetWindow();
+
     Color GetBackgroundColor();
+
     void Draw(const std::function<bool()>&);
+
     static void CloseCurrentWindow();
 };
 

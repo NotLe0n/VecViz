@@ -7,7 +7,8 @@
 class Drawing {
 public:
     static void
-    DrawToOtherRt(Camera2D camera, RenderTexture rt, RenderTexture otherRt, const std::function<void()> &drawFunc) {
+    DrawToOtherRt(Camera2D camera, RenderTexture rt, RenderTexture otherRt, const std::function<void()>& drawFunc)
+    {
         EndMode2D();
         EndTextureMode();
         BeginTextureMode(otherRt);
@@ -19,7 +20,8 @@ public:
         BeginMode2D(camera);
     }
 
-    static void DrawArrow2D(Vector2 pos, Vector2 origin, float arrowLength, Color color) {
+    static void DrawArrow2D(Vector2 pos, Vector2 origin, float arrowLength, Color color)
+    {
         // calculate arrow triangle points
         float dx = pos.x - origin.x;
         float dy = pos.y - origin.y;
@@ -42,15 +44,20 @@ public:
         DrawLineV(origin, pos, color);
     }
 
-    static void DrawText(const std::string& text, const float& posX, const float& posY, const Color& color, const float& size) {
+    static void
+    DrawText(const std::string& text, const float& posX, const float& posY, const Color& color, const float& size)
+    {
         DrawTextEx(FontManager::font, text.c_str(), {posX, posY}, size, 0, color);
     }
 
-    static void DrawText(const std::string& text, Vector2 pos, const Color& color, const float& size) {
+    static void DrawText(const std::string& text, Vector2 pos, const Color& color, const float& size)
+    {
         DrawTextEx(FontManager::font, text.c_str(), pos, size, 0, color);
     }
 
-    static void DrawMathText(const std::string& text, const float& posX, const float& posY, const Color& color, const float& size) {
+    static void
+    DrawMathText(const std::string& text, const float& posX, const float& posY, const Color& color, const float& size)
+    {
         DrawTextEx(FontManager::mathFont, text.c_str(), {posX, posY}, size, 0, color);
     }
 };

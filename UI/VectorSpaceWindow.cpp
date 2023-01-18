@@ -3,7 +3,8 @@
 #include "rlImGui.h"
 #include "../utils.h"
 
-void DrawVectorSpaceWindow(std::unique_ptr<VectorSpace>& currentVs) {
+void DrawVectorSpaceWindow(std::unique_ptr<VectorSpace>& currentVs)
+{
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
     ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
     if (ImGui::Begin("Vectorspace view"), 0, ImGuiWindowFlags_NoDocking) {
@@ -14,7 +15,7 @@ void DrawVectorSpaceWindow(std::unique_ptr<VectorSpace>& currentVs) {
             return;
         }
 
-        Texture *renderTexture = &currentVs->GetRenderTexture()->texture;
+        Texture* renderTexture = &currentVs->GetRenderTexture()->texture;
         VectorSpace::drawOffset = {ImGui::GetWindowPos().x, ImGui::GetWindowPos().y};
 
         float rtw = ImGui::GetWindowWidth();

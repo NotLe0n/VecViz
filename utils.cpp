@@ -1,7 +1,7 @@
 #include "utils.h"
 #include "raymath.h"
 
-std::vector<std::string> split(std::string s, const std::string &del)
+std::vector<std::string> split(std::string s, const std::string& del)
 {
     size_t pos = 0;
     std::string token;
@@ -31,7 +31,7 @@ ImGuiID DockFullScreen()
     static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
     ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
 
-    const ImGuiViewport *viewport = ImGui::GetMainViewport();
+    const ImGuiViewport* viewport = ImGui::GetMainViewport();
     ImGui::SetNextWindowPos(viewport->WorkPos);
     ImGui::SetNextWindowSize(viewport->WorkSize);
     ImGui::SetNextWindowViewport(viewport->ID);
@@ -52,7 +52,7 @@ ImGuiID DockFullScreen()
     return dockspace_id;
 }
 
-void TextCentered(const std::string &text)
+void TextCentered(const std::string& text)
 {
     ImVec2 windowSize = ImGui::GetWindowSize();
     float textWidth = ImGui::CalcTextSize(text.c_str()).x;

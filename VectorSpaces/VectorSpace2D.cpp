@@ -8,28 +8,33 @@
 
 Camera2D camera;
 
-VectorSpace2D::VectorSpace2D() {
+VectorSpace2D::VectorSpace2D()
+{
     camera = Camera2D();
     camera.zoom = 50.0;
-    camera.offset = {(GetScreenWidth() - 300) / 2.0f , GetScreenHeight() / 2.0f};
+    camera.offset = {(GetScreenWidth() - 300) / 2.0f, GetScreenHeight() / 2.0f};
 }
 
-VectorSpace2D::~VectorSpace2D() {
+VectorSpace2D::~VectorSpace2D()
+{
     UnloadRenderTexture(rt);
     UnloadRenderTexture(textTexture);
 }
 
-int VectorSpace2D::GetDimension() {
+int VectorSpace2D::GetDimension()
+{
     return 2;
 }
 
-void VectorSpace2D::Update() {
+void VectorSpace2D::Update()
+{
     // dragging code
     if (IsMouseButtonDown(MOUSE_BUTTON_MIDDLE)) {
         Vector2 delta = GetMouseDelta();
         delta = Vector2Scale(delta, -1.0f / camera.zoom);
 
-        camera.target = Vector2Add(camera.target, {delta.x, -delta.y}); // invert Y because RenderTarget is flipped
+        camera.target = Vector2Add(camera.target,
+                                   {delta.x, -delta.y}); // invert Y because RenderTarget is flipped
     }
 
     // zooming code
@@ -46,7 +51,8 @@ void VectorSpace2D::Update() {
 
         // Set the target to match, so that the camera maps the world space point
         // under the cursor to the screen space point under the cursor at any zoom
-        camera.target = Vector2Subtract(mouseWorldPos, Vector2Scale({drawOffset.x, -drawOffset.y}, 1 / camera.zoom));
+        camera.target = Vector2Subtract(mouseWorldPos,
+                                        Vector2Scale({drawOffset.x, -drawOffset.y}, 1 / camera.zoom));
 
         // Zoom increment
         camera.zoom = Clamp(camera.zoom + wheel * 2, 25, 300);
@@ -59,9 +65,10 @@ float labelFontSize;
 
 //void DrawDebugInfo();
 
-void VectorSpace2D::Draw() {
+void VectorSpace2D::Draw()
+{
     worldStart = VecToWorldSpace({drawOffset.x, -drawOffset.y}, camera);
-    worldEnd = VecToWorldSpace({(float)GetScreenWidth(), (float)GetScreenHeight()}, camera);
+    worldEnd = VecToWorldSpace({(float) GetScreenWidth(), (float) GetScreenHeight()}, camera);
     labelFontSize = sqrtf(camera.zoom * 3);
     if (labelFontSize > 48) {
         labelFontSize = 48;
@@ -91,11 +98,12 @@ void VectorSpace2D::Draw() {
 }
 
 
-void VectorSpace2D::ApplyTransformation(Matrix transformationMatrix) {
+void VectorSpace2D::ApplyTransformation(Matrix transformationMatrix)
+{
     this->transformationMatrix = transformationMatrix;
 
-    BasisX.vector = { transformationMatrix.m0, transformationMatrix.m1, 0 };
-    BasisY.vector = { transformationMatrix.m4, transformationMatrix.m5, 0 };
+    BasisX.vector = {transformationMatrix.m0, transformationMatrix.m1, 0};
+    BasisY.vector = {transformationMatrix.m4, transformationMatrix.m5, 0};
 }
 
 /*void DrawDebugInfo() {
@@ -111,16 +119,20 @@ void VectorSpace2D::ApplyTransformation(Matrix transformationMatrix) {
     Drawing::DrawText(stringBuilder.str(), VectorSpace::drawOffset.x, 0, YELLOW, 20);
 }*/
 
-void VectorSpace2D::DrawOrigGrid() {
-    for (int i = (int)worldStart.y; i > worldEnd.y; i--) {
-        DrawRay(Ray{{worldStart.x, float(i), 0}, {1, 0, 0}}, DARKGRAY);
+void VectorSpace2D::DrawOrigGrid()
+{
+    for (int i = (int) worldStart.y; i > worldEnd.y; i--) {
+        DrawRay(Ray{{worldStart.x, float(i), 0},
+                    {1,            0,        0}}, DARKGRAY);
     }
-    for (int i = (int)worldEnd.x; i > worldStart.x; i--) {
-        DrawRay(Ray{{float(i), worldEnd.y, 0}, {0, 1, 0}}, DARKGRAY);
+    for (int i = (int) worldEnd.x; i > worldStart.x; i--) {
+        DrawRay(Ray{{float(i), worldEnd.y, 0},
+                    {0,        1,          0}}, DARKGRAY);
     }
 }
 
-void VectorSpace2D::DrawYAxis() {
+void VectorSpace2D::DrawYAxis()
+{
     Vector3 dir1 = {0, 1, 0};
     Vector3 dir2 = {0, -1, 0};
 
@@ -130,10 +142,11 @@ void VectorSpace2D::DrawYAxis() {
     DrawYAxisTicks();
 }
 
-void VectorSpace2D::DrawYAxisTicks() {
-    for (int i = (int)worldStart.y; i > worldEnd.y; i--) {
-        Vector2 a = {10 / camera.zoom, (float)i};
-        Vector2 b = {-10 / camera.zoom, (float)i};
+void VectorSpace2D::DrawYAxisTicks()
+{
+    for (int i = (int) worldStart.y; i > worldEnd.y; i--) {
+        Vector2 a = {10 / camera.zoom, (float) i};
+        Vector2 b = {-10 / camera.zoom, (float) i};
 
         // Draw Y axis ticks
         DrawLineV(a, b, WHITE);
@@ -146,7 +159,8 @@ void VectorSpace2D::DrawYAxisTicks() {
     }
 }
 
-void VectorSpace2D::DrawXAxis() {
+void VectorSpace2D::DrawXAxis()
+{
     Vector3 dir1 = {1, 0, 0};
     Vector3 dir2 = {-1, 0, 0};
 
@@ -156,10 +170,11 @@ void VectorSpace2D::DrawXAxis() {
     DrawXAxisTicks();
 }
 
-void VectorSpace2D::DrawXAxisTicks() {
-    for (int i = (int)worldStart.x; i < worldEnd.x; i++) {
-        Vector2 a = {(float)i, 10 / camera.zoom};
-        Vector2 b = {(float)i, -10 / camera.zoom};
+void VectorSpace2D::DrawXAxisTicks()
+{
+    for (int i = (int) worldStart.x; i < worldEnd.x; i++) {
+        Vector2 a = {(float) i, 10 / camera.zoom};
+        Vector2 b = {(float) i, -10 / camera.zoom};
 
         // Draw X axis ticks
         DrawLineV(a, b, WHITE);
@@ -173,25 +188,33 @@ void VectorSpace2D::DrawXAxisTicks() {
     }
 }
 
-Vector2 VectorSpace2D::VecToWorldSpace(Vector2 pos, Camera2D cam) {
-    return GetScreenToWorld2D({pos.x - drawOffset.x,  GetMonitorHeight(GetCurrentMonitor()) - pos.y - drawOffset.y}, cam);
-}
-Vector2 VectorSpace2D::WorldVecToScreenSpace(Vector2 pos, Camera2D cam) {
-    Vector2 trans = GetWorldToScreen2D(pos, cam);
-    return {trans.x + drawOffset.x,  GetMonitorHeight(GetCurrentMonitor()) - trans.y - drawOffset.y};
+Vector2 VectorSpace2D::VecToWorldSpace(Vector2 pos, Camera2D cam)
+{
+    return GetScreenToWorld2D(
+            {pos.x - drawOffset.x, GetMonitorHeight(GetCurrentMonitor()) - pos.y - drawOffset.y}, cam);
 }
 
-void VectorSpace2D::DrawVectors() {
+Vector2 VectorSpace2D::WorldVecToScreenSpace(Vector2 pos, Camera2D cam)
+{
+    Vector2 trans = GetWorldToScreen2D(pos, cam);
+    return {trans.x + drawOffset.x, GetMonitorHeight(GetCurrentMonitor()) - trans.y - drawOffset.y};
+}
+
+void VectorSpace2D::DrawVectors()
+{
     DrawAVector(BasisX, u"\U000000EE", GRAY, 0); // i with hat
     DrawAVector(BasisY, u"\U00000135", GRAY, 0); // j with hat
 
     for (int i = 0; i < vectors.size(); i++) {
-        DrawAVector(vectors[i], u"\U0001D463" + FontManager::NumToSubscript(i), vectors[i].color, t); // v with subscript vector index
+        DrawAVector(vectors[i], u"\U0001D463" + FontManager::NumToSubscript(i), vectors[i].color,
+                    t); // v with subscript vector index
     }
 }
 
-void VectorSpace2D::DrawAVector(DrawVector vector, const std::u16string& name, Color color, float t) {
-    Vector2 transformedPos = Vector2Transform({vector.vector.x, vector.vector.y}, MatrixLerp(transformationMatrix, t));
+void VectorSpace2D::DrawAVector(DrawVector vector, const std::u16string& name, Color color, float t)
+{
+    Vector2 transformedPos = Vector2Transform({vector.vector.x, vector.vector.y},
+                                              MatrixLerp(transformationMatrix, t));
 
     // draw vector point
     DrawCircleV(transformedPos, 3 / camera.zoom, color);
@@ -212,6 +235,7 @@ void VectorSpace2D::DrawAVector(DrawVector vector, const std::u16string& name, C
         std::stringstream stringBuilder;
         stringBuilder.precision(3);
         stringBuilder << "(" << vector.X() << ", " << vector.Y() << ")";
-        Drawing::DrawText(stringBuilder.str(), labelPosition.x + 2, labelPosition.y + .35f * camera.zoom, color, labelFontSize);
+        Drawing::DrawText(stringBuilder.str(), labelPosition.x + 2, labelPosition.y + .35f * camera.zoom, color,
+                          labelFontSize);
     });
 }

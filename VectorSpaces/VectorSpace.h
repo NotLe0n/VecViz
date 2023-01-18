@@ -8,6 +8,7 @@
 class VectorSpace {
 public:
     static Vector2 drawOffset;
+
     virtual ~VectorSpace() = default;
 
 protected:
@@ -25,9 +26,13 @@ protected:
 
 public:
     virtual int GetDimension() = 0;
+
     virtual void Draw() = 0;
+
     virtual void Update() = 0;
+
     virtual void ApplyTransformation(Matrix transformationMatrix) = 0;
+
     RenderTexture* GetRenderTexture();
 };
 

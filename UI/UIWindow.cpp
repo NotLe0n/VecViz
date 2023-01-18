@@ -3,7 +3,7 @@
 #include "../FontManager.h"
 
 UIWindow::UIWindow(const std::string& title, const Color& backgroundColor, const ConfigFlags& flags)
-    : backgroundColor(backgroundColor)
+        : backgroundColor(backgroundColor)
 {
     SetWindowState(FLAG_MSAA_4X_HINT);
     InitWindow(800, 600, title.c_str());
@@ -11,12 +11,14 @@ UIWindow::UIWindow(const std::string& title, const Color& backgroundColor, const
     MaximizeWindow();
 }
 
-UIWindow &UIWindow::GetWindow() {
+UIWindow& UIWindow::GetWindow()
+{
     static UIWindow window("Vector Visualization", Color{20, 20, 20, 255}, FLAG_WINDOW_RESIZABLE);
     return window;
 }
 
-void StyleImGui() {
+void StyleImGui()
+{
     ImVec4* colors = ImGui::GetStyle().Colors;
     colors[ImGuiCol_Text]                   = ImVec4(1.00f, 1.00f, 1.00f, 1.00f);
     colors[ImGuiCol_TextDisabled]           = ImVec4(0.50f, 0.50f, 0.50f, 1.00f);
@@ -87,12 +89,13 @@ void StyleImGui() {
     style.WindowMenuButtonPosition = ImGuiDir_Right;
 }
 
-void UIWindow::Draw(const std::function<bool()>& drawFunc) {
-    #if defined(PLATFORM_WEB)
-        emscripten_set_main_loop(drawFunc, 0, 1);
-    #else
-        SetTargetFPS(120);
-    #endif
+void UIWindow::Draw(const std::function<bool()>& drawFunc)
+{
+#if defined(PLATFORM_WEB)
+    emscripten_set_main_loop(drawFunc, 0, 1);
+#else
+    SetTargetFPS(120);
+#endif
 
     rlImGuiSetup(true);
 
@@ -110,7 +113,7 @@ void UIWindow::Draw(const std::function<bool()>& drawFunc) {
 
             rlImGuiBegin();
             {
-                if (!drawFunc()){
+                if (!drawFunc()) {
                     break;
                 }
             }
@@ -120,11 +123,13 @@ void UIWindow::Draw(const std::function<bool()>& drawFunc) {
     }
 }
 
-Color UIWindow::GetBackgroundColor() {
+Color UIWindow::GetBackgroundColor()
+{
     return backgroundColor;
 }
 
-void UIWindow::CloseCurrentWindow() {
+void UIWindow::CloseCurrentWindow()
+{
     rlImGuiShutdown();
     FontManager::UnloadFonts();
     CloseWindow();

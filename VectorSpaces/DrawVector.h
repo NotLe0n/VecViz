@@ -21,7 +21,9 @@ private:
 
 public:
     [[nodiscard]] float X() const;
+
     [[nodiscard]] float Y() const;
+
     [[nodiscard]] float Z() const;
 };
 
