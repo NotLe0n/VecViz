@@ -1,6 +1,6 @@
 #include <string>
-#include "TransformationWindow.h"
 #include "imgui.h"
+#include "SubWindows.h"
 
 float transformMatrixVals[9] = { 1, 0, 0, 0, 1, 0, 0, 0, 1, };
 bool sinusMode;

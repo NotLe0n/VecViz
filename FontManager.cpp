@@ -29,6 +29,11 @@ void FontManager::LoadFonts() {
     rlImGuiReloadFonts(); // required
 }
 
+void FontManager::UnloadFonts() {
+    UnloadFont(font);
+    UnloadFont(mathFont);
+}
+
 std::vector<int> FontManager::ParseGlyphFile(const std::string& path) {
     std::ifstream t(path);
     if (!t.is_open()) {

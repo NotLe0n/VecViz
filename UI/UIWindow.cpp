@@ -87,7 +87,7 @@ void StyleImGui() {
     style.WindowMenuButtonPosition = ImGuiDir_Right;
 }
 
-void UIWindow::Draw(const std::function<void()>& drawFunc) {
+void UIWindow::Draw(const std::function<bool()>& drawFunc) {
     #if defined(PLATFORM_WEB)
         emscripten_set_main_loop(drawFunc, 0, 1);
     #else
@@ -105,16 +105,27 @@ void UIWindow::Draw(const std::function<void()>& drawFunc) {
 
     while (!WindowShouldClose()) {
         BeginDrawing();
-        ClearBackground(backgroundColor);
-        drawFunc();
+        {
+            ClearBackground(backgroundColor);
+
+            rlImGuiBegin();
+            {
+                if (!drawFunc()){
+                    break;
+                }
+            }
+            rlImGuiEnd();
+        }
         EndDrawing();
     }
-
-    rlImGuiShutdown();
-
-    CloseWindow();
 }
 
 Color UIWindow::GetBackgroundColor() {
     return backgroundColor;
+}
+
+void UIWindow::CloseCurrentWindow() {
+    rlImGuiShutdown();
+    FontManager::UnloadFonts();
+    CloseWindow();
 }

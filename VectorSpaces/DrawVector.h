@@ -1,7 +1,7 @@
-#include "raylib.h"
-
 #ifndef VECVIZ_DRAWVECTOR_H
 #define VECVIZ_DRAWVECTOR_H
+
+#include "raylib.h"
 
 class DrawVector {
 private:

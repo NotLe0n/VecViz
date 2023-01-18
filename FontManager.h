@@ -19,6 +19,7 @@ private:
 
 public:
     static void LoadFonts();
+    static void UnloadFonts();
     static std::u16string NumToSubscript(int n);
     static char16_t ToSubscript(char16_t c);
 };

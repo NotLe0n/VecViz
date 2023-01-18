@@ -22,7 +22,8 @@ public:
 public:
     static UIWindow& GetWindow();
     Color GetBackgroundColor();
-    void Draw(const std::function<void()>&);
+    void Draw(const std::function<bool()>&);
+    static void CloseCurrentWindow();
 };
 
 #endif //VECVIZ_UIWINDOW_H

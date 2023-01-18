@@ -1,13 +1,14 @@
+#ifndef VECVIZ_VECTORSPACE_H
+#define VECVIZ_VECTORSPACE_H
+
 #include "DrawVector.h"
 #include "vector"
 #include "raymath.h"
 
-#ifndef VECVIZ_VECTORSPACE_H
-#define VECVIZ_VECTORSPACE_H
-
 class VectorSpace {
 public:
     static Vector2 drawOffset;
+    virtual ~VectorSpace() = default;
 
 protected:
     RenderTexture rt = LoadRenderTexture(GetMonitorWidth(GetCurrentMonitor()), GetMonitorHeight(GetCurrentMonitor()));

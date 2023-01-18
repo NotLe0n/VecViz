@@ -10,6 +10,7 @@ private:
 
 public:
     VectorSpace2D();
+    ~VectorSpace2D() override;
 
 public:
     int GetDimension() override;

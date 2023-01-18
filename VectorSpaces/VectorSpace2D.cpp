@@ -14,6 +14,11 @@ VectorSpace2D::VectorSpace2D() {
     camera.offset = {(GetScreenWidth() - 300) / 2.0f , GetScreenHeight() / 2.0f};
 }
 
+VectorSpace2D::~VectorSpace2D() {
+    UnloadRenderTexture(rt);
+    UnloadRenderTexture(textTexture);
+}
+
 int VectorSpace2D::GetDimension() {
     return 2;
 }
