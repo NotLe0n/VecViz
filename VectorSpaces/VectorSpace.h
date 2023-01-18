@@ -5,6 +5,7 @@
 #include "vector"
 #include "raymath.h"
 
+// Abstract class
 class VectorSpace {
 public:
     static Vector2 drawOffset;
@@ -19,16 +20,15 @@ public:
     std::vector<DrawVector> vectors{}; // list of vectors
 
 protected:
-    DrawVector BasisX{1}; // Basis Vector for the X Direction
-    DrawVector BasisY{0, 1}; // Basis Vector for the Y Direction
-    DrawVector BasisZ{0, 0, 1}; // Basis Vector for the Z Direction
+    DrawVector BasisX{1}; // Basis vector for the X direction
+    DrawVector BasisY{0, 1}; // Basis vector for the Y direction
+    DrawVector BasisZ{0, 0, 1}; // Basis vector for the Z direction
     Matrix transformationMatrix = MatrixIdentity();
 
 public:
     virtual int GetDimension() = 0;
 
     virtual void Draw() = 0;
-
     virtual void Update() = 0;
 
     virtual void ApplyTransformation(Matrix transformationMatrix) = 0;

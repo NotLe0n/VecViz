@@ -8,8 +8,9 @@ std::vector<bool> selectVectorList = {};
 
 void DrawVectorsWindow(std::unique_ptr<VectorSpace>& currentVs)
 {
-    if (!currentVs)
+    if (!currentVs) {
         return;
+    }
 
     Settings& settings = Settings::GetSettings();
 

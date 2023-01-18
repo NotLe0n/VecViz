@@ -5,6 +5,7 @@
 #include <string>
 #include "raylib.h"
 
+// Singleton wraps the creation of Raylib window instance and draw loop
 class UIWindow {
 
 private:
@@ -15,11 +16,9 @@ private:
 
 public:
     UIWindow(UIWindow&&) = delete;
-
     UIWindow(UIWindow&) = delete;
 
     void operator=(const UIWindow&) = delete;
-
     void operator=(const UIWindow&&) = delete;
 
 public:
@@ -27,8 +26,10 @@ public:
 
     Color GetBackgroundColor();
 
+    // Begins draw loop
     void Draw(const std::function<bool()>&);
 
+    // NOTE: Make sure to close all ImGui windows beforehand
     static void CloseCurrentWindow();
 };
 

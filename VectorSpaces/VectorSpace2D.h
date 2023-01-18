@@ -10,14 +10,12 @@ private:
 
 public:
     VectorSpace2D();
-
     ~VectorSpace2D() override;
 
 public:
     int GetDimension() override;
 
     void Draw() override;
-
     void Update() override;
 
     void ApplyTransformation(Matrix transformationMatrix) override;
@@ -26,19 +24,15 @@ private:
     void DrawOrigGrid();
 
     void DrawYAxis();
-
     void DrawYAxisTicks();
 
     void DrawXAxis();
-
     void DrawXAxisTicks();
 
     void DrawVectors();
-
     void DrawAVector(DrawVector vector, const std::u16string& name, Color color, float t);
 
     Vector2 VecToWorldSpace(Vector2 pos, Camera2D cam);
-
     static Vector2 WorldVecToScreenSpace(Vector2 pos, Camera2D cam);
 };
 

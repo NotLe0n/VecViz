@@ -3,10 +3,7 @@
 
 int DrawVector::vectorCount = 0;
 
-DrawVector::DrawVector(float x, float y, float z)
-        :
-        vector({x, y, z}),
-        origin(Vector3Zero())
+DrawVector::DrawVector(float x, float y, float z) : vector({x, y, z}), origin(Vector3Zero())
 {
     vectorIndex = vectorCount;
     vectorCount++;
@@ -17,7 +14,7 @@ DrawVector::DrawVector(float x, float y, float z)
 Color DrawVector::GetRandomColor()
 {
     float offset = GetRandomValue(0, 180);
-    float h = (int) (offset + vectorIndex * 137.508f) % 360; // use golden angle approximation
+    float h = (int)(offset + vectorIndex * 137.508f) % 360; // use golden angle approximation
     float s = GetRandomValue(60, 80) / 100.0f;
     const float v = 1;
 
