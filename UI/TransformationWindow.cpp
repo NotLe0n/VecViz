@@ -6,6 +6,9 @@ float transformMatrixVals[9] = { 1, 0, 0, 0, 1, 0, 0, 0, 1, };
 bool sinusMode;
 
 void DrawTransformationWindow(std::unique_ptr<VectorSpace>& currentVs) {
+    if (!currentVs)
+        return;
+
     ImGui::Begin("Transformations");
     {
         ImGui::Text("Transformation percentage:");

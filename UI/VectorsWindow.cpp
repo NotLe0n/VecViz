@@ -5,7 +5,11 @@
 float addVectorVals[] = {0, 0};
 std::vector<bool> selectVectorList = {};
 
-void DrawVectorsWindow(std::unique_ptr<VectorSpace>& currentVs) {
+void DrawVectorsWindow(std::unique_ptr<VectorSpace>& currentVs)
+{
+    if (!currentVs)
+        return;
+
     ImGui::Begin("Vectors");
     {
         float numberInputWidth = ImGui::CalcTextSize("8.888").x;
