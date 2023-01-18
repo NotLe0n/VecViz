@@ -5,6 +5,7 @@
 #include "codecvt"
 #include "../utils.h"
 #include <sstream>
+#include "../Settings.h"
 
 Camera2D camera;
 
@@ -79,9 +80,15 @@ void VectorSpace2D::Draw()
         ClearBackground(UIWindow::GetWindow().GetBackgroundColor());
         BeginMode2D(camera);
         {
-            DrawOrigGrid();
-            DrawYAxis();
-            DrawXAxis();
+            Settings& settings = Settings::GetSettings();
+            if (settings.drawGrid) {
+                DrawOrigGrid();
+            }
+
+            if (settings.drawAxis){
+                DrawYAxis();
+                DrawXAxis();
+            }
 
             DrawVectors();
         }
@@ -190,8 +197,7 @@ void VectorSpace2D::DrawXAxisTicks()
 
 Vector2 VectorSpace2D::VecToWorldSpace(Vector2 pos, Camera2D cam)
 {
-    return GetScreenToWorld2D(
-            {pos.x - drawOffset.x, GetMonitorHeight(GetCurrentMonitor()) - pos.y - drawOffset.y}, cam);
+    return GetScreenToWorld2D({pos.x - drawOffset.x, GetMonitorHeight(GetCurrentMonitor()) - pos.y - drawOffset.y}, cam);
 }
 
 Vector2 VectorSpace2D::WorldVecToScreenSpace(Vector2 pos, Camera2D cam)
@@ -202,40 +208,47 @@ Vector2 VectorSpace2D::WorldVecToScreenSpace(Vector2 pos, Camera2D cam)
 
 void VectorSpace2D::DrawVectors()
 {
-    DrawAVector(BasisX, u"\U000000EE", GRAY, 0); // i with hat
-    DrawAVector(BasisY, u"\U00000135", GRAY, 0); // j with hat
+    Settings& settings = Settings::GetSettings();
+    if (settings.drawBasisVectors) {
+        DrawAVector(BasisX, u"\U000000EE", GRAY, 0); // i with hat
+        DrawAVector(BasisY, u"\U00000135", GRAY, 0); // j with hat
+    }
 
     for (int i = 0; i < vectors.size(); i++) {
-        DrawAVector(vectors[i], u"\U0001D463" + FontManager::NumToSubscript(i), vectors[i].color,
-                    t); // v with subscript vector index
+        DrawAVector(vectors[i], u"\U0001D463" + FontManager::NumToSubscript(i), vectors[i].color, t); // v with subscript vector index
     }
 }
 
 void VectorSpace2D::DrawAVector(DrawVector vector, const std::u16string& name, Color color, float t)
 {
-    Vector2 transformedPos = Vector2Transform({vector.vector.x, vector.vector.y},
-                                              MatrixLerp(transformationMatrix, t));
+    Settings& settings = Settings::GetSettings();
+    Vector2 transformedPos = Vector2Transform({vector.vector.x, vector.vector.y}, MatrixLerp(transformationMatrix, t));
 
-    // draw vector point
-    DrawCircleV(transformedPos, 3 / camera.zoom, color);
+    if (settings.drawVectorPoint) {
+        DrawCircleV(transformedPos, 3 / camera.zoom, color);
+    }
 
-    // draw vector arrow
-    Drawing::DrawArrow2D(transformedPos, {vector.origin.x, vector.origin.y}, 10 / camera.zoom, color);
+    if (settings.drawVectorArrow) {
+        Drawing::DrawArrow2D(transformedPos, {vector.origin.x, vector.origin.y}, 10 / camera.zoom, color);
+    }
 
-    Drawing::DrawToOtherRt(camera, rt, textTexture, [&name, &vector, &transformedPos, &color] {
-        Vector2 screenPos = VectorSpace2D::WorldVecToScreenSpace(transformedPos, camera);
-        Vector2 labelPosition = {screenPos.x + .1f * camera.zoom, screenPos.y - .2f * camera.zoom};
+    if (settings.drawVectorLabel) {
+        Drawing::DrawToOtherRt(camera, rt, textTexture, [&name, &vector, &transformedPos, &color, &settings] {
+            Vector2 screenPos = VectorSpace2D::WorldVecToScreenSpace(transformedPos, camera);
+            Vector2 labelPosition = {screenPos.x + .1f * camera.zoom, screenPos.y - .2f * camera.zoom};
 
-        // Draw vector name
-        std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> convert;
-        std::string utf8_name = convert.to_bytes(name);
-        Drawing::DrawMathText(utf8_name, labelPosition.x, labelPosition.y, color, labelFontSize * 2);
+            if (settings.drawVectorName) {
+                std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> convert;
+                std::string utf8_name = convert.to_bytes(name);
+                Drawing::DrawMathText(utf8_name, labelPosition.x, labelPosition.y, color, labelFontSize * 2);
+            }
 
-        // Draw position label
-        std::stringstream stringBuilder;
-        stringBuilder.precision(3);
-        stringBuilder << "(" << vector.X() << ", " << vector.Y() << ")";
-        Drawing::DrawText(stringBuilder.str(), labelPosition.x + 2, labelPosition.y + .35f * camera.zoom, color,
-                          labelFontSize);
-    });
+            if (settings.drawVectorCoords) {
+                std::stringstream stringBuilder;
+                stringBuilder.precision(settings.decimalPrecision);
+                stringBuilder << "(" << vector.X() << ", " << vector.Y() << ")";
+                Drawing::DrawText(stringBuilder.str(), labelPosition.x + 2, labelPosition.y + .35f * camera.zoom, color, labelFontSize);
+            }
+        });
+    }
 }

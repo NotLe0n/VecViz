@@ -2,6 +2,7 @@
 #include "imgui.h"
 #include <memory>
 #include "../VectorSpaces/VectorSpace2D.h"
+#include "../Settings.h"
 
 bool DrawMenuBar(std::unique_ptr<VectorSpace>& currentVs)
 {
@@ -50,7 +51,20 @@ bool DrawMenuBar(std::unique_ptr<VectorSpace>& currentVs)
         }
 
         if (ImGui::BeginMenu("Options")) {
-            ImGui::MenuItem("Test");
+            Settings& settings = Settings::GetSettings();
+
+            ImGui::Checkbox("Draw grid", &settings.drawGrid);
+            ImGui::Checkbox("Draw axis", &settings.drawAxis);
+            ImGui::Checkbox("Draw vector arrows", &settings.drawVectorArrow);
+            ImGui::Checkbox("Draw vector point", &settings.drawVectorPoint);
+            ImGui::Checkbox("Draw vector name", &settings.drawVectorName);
+            ImGui::Checkbox("Draw vector coordinates", &settings.drawVectorCoords);
+            ImGui::Checkbox("Draw vector label", &settings.drawVectorLabel);
+            ImGui::Checkbox("Draw basis vector(s)", &settings.drawBasisVectors);
+
+            ImGui::Separator();
+
+            ImGui::DragInt("Decimal precision", &settings.decimalPrecision, 1, 0, 6);
 
             ImGui::EndMenu();
         }
