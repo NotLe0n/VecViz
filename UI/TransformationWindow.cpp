@@ -1,6 +1,7 @@
 #include <string>
 #include "imgui.h"
 #include "SubWindows.h"
+#include "../Settings.h"
 
 float transformMatrixVals[9] = {1, 0, 0, 0, 1, 0, 0, 0, 1,};
 bool sinusMode;
@@ -10,11 +11,13 @@ void DrawTransformationWindow(std::unique_ptr<VectorSpace>& currentVs)
     if (!currentVs)
         return;
 
+    Settings& setting = Settings::GetSettings();
+
     ImGui::Begin("Transformations");
     {
         ImGui::Text("Transformation percentage:");
         ImGui::SetNextItemWidth(160);
-        ImGui::SliderFloat("##tValue", &currentVs->t, 0, 1);
+        ImGui::SliderFloat("##tValue", &currentVs->t, 0, 1, setting.GetDecimalPrecisionStr().c_str());
         ImGui::SameLine();
         ImGui::Checkbox("Sinus mode", &sinusMode);
 
@@ -26,12 +29,12 @@ void DrawTransformationWindow(std::unique_ptr<VectorSpace>& currentVs)
         for (int i = 0; i < currentVs->GetDimension(); ++i) {
             ImGui::SetNextItemWidth(80);
             ImGui::InputFloat((std::string("##transformMatrix:") + std::to_string(i)).c_str(),
-                              &transformMatrixVals[i]);
+                              &transformMatrixVals[i], 0, 0, setting.GetDecimalPrecisionStr().c_str());
             for (int j = 1; j < currentVs->GetDimension(); ++j) {
                 ImGui::SameLine();
                 ImGui::SetNextItemWidth(80);
                 ImGui::InputFloat((std::string("##transformMatrix:") + std::to_string(i + j * 3)).c_str(),
-                                  &transformMatrixVals[i + j * 3]);
+                                  &transformMatrixVals[i + j * 3], 0, 0, setting.GetDecimalPrecisionStr().c_str());
             }
         }
 
