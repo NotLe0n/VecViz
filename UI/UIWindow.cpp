@@ -2,8 +2,7 @@
 #include "rlImGui.h"
 #include "../FontManager.h"
 
-UIWindow::UIWindow(const std::string& title, const Color& backgroundColor, const ConfigFlags& flags)
-        : backgroundColor(backgroundColor)
+UIWindow::UIWindow(const std::string& title, const ConfigFlags& flags)
 {
     SetWindowState(FLAG_MSAA_4X_HINT);
     InitWindow(800, 600, title.c_str());
@@ -13,7 +12,7 @@ UIWindow::UIWindow(const std::string& title, const Color& backgroundColor, const
 
 UIWindow& UIWindow::GetWindow()
 {
-    static UIWindow window("Vector Visualization", Color{20, 20, 20, 255}, FLAG_WINDOW_RESIZABLE);
+    static UIWindow window("Vector Visualization", FLAG_WINDOW_RESIZABLE);
     return window;
 }
 
@@ -44,9 +43,9 @@ void StyleImGui()
     colors[ImGuiCol_Button]                 = ImVec4(0.18f, 0.18f, 0.18f, 0.54f);
     colors[ImGuiCol_ButtonHovered]          = ImVec4(0.35f, 0.35f, 0.35f, 0.54f);
     colors[ImGuiCol_ButtonActive]           = ImVec4(0.26f, 0.28f, 0.30f, 0.86f);
-    colors[ImGuiCol_Header]                 = ImVec4(0.00f, 0.00f, 0.00f, 0.52f);
-    colors[ImGuiCol_HeaderHovered]          = ImVec4(0.00f, 0.00f, 0.00f, 0.36f);
-    colors[ImGuiCol_HeaderActive]           = ImVec4(0.20f, 0.22f, 0.23f, 0.33f);
+    colors[ImGuiCol_Header]                 = ImVec4(0.21f, 0.21f, 0.23f, 0.64f);
+    colors[ImGuiCol_HeaderHovered]          = ImVec4(0.21f, 0.21f, 0.22f, 0.36f);
+    colors[ImGuiCol_HeaderActive]           = ImVec4(0.36f, 0.40f, 0.42f, 0.33f);
     colors[ImGuiCol_Separator]              = ImVec4(0.76f, 0.74f, 0.74f, 0.38f);
     colors[ImGuiCol_SeparatorHovered]       = ImVec4(0.59f, 0.66f, 0.66f, 0.65f);
     colors[ImGuiCol_SeparatorActive]        = ImVec4(0.62f, 0.67f, 0.70f, 1.00f);
@@ -75,7 +74,6 @@ void StyleImGui()
     colors[ImGuiCol_NavWindowingHighlight]  = ImVec4(1.00f, 1.00f, 1.00f, 0.70f);
     colors[ImGuiCol_NavWindowingDimBg]      = ImVec4(1.00f, 1.00f, 1.00f, 0.20f);
     colors[ImGuiCol_ModalWindowDimBg]       = ImVec4(1.00f, 1.00f, 1.00f, 0.35f);
-
 
     ImGuiStyle& style = ImGui::GetStyle();
     style.FrameRounding = 5;
@@ -109,8 +107,6 @@ void UIWindow::Draw(const std::function<bool()>& drawFunc)
     while (!WindowShouldClose()) {
         BeginDrawing();
         {
-            ClearBackground(backgroundColor);
-
             rlImGuiBegin();
             {
                 if (!drawFunc()) {
@@ -121,11 +117,6 @@ void UIWindow::Draw(const std::function<bool()>& drawFunc)
         }
         EndDrawing();
     }
-}
-
-Color UIWindow::GetBackgroundColor()
-{
-    return backgroundColor;
 }
 
 void UIWindow::CloseCurrentWindow()

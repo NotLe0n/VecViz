@@ -9,10 +9,7 @@
 class UIWindow {
 
 private:
-    UIWindow(const std::string& title, const Color& backgroundColor, const ConfigFlags& flags);
-
-private:
-    Color backgroundColor;
+    UIWindow(const std::string& title, const ConfigFlags& flags);
 
 public:
     UIWindow(UIWindow&&) = delete;
@@ -23,8 +20,6 @@ public:
 
 public:
     static UIWindow& GetWindow();
-
-    Color GetBackgroundColor();
 
     // Begins draw loop
     void Draw(const std::function<bool()>&);

@@ -4,7 +4,7 @@
 #include "../Settings.h"
 
 float addVectorVals[] = {0, 0};
-std::vector<bool> selectVectorList = {};
+std::vector<char> selectVectorList = {}; // replacement for vector<bool>
 
 void DrawVectorsWindow(std::unique_ptr<VectorSpace>& currentVs)
 {
@@ -23,6 +23,7 @@ void DrawVectorsWindow(std::unique_ptr<VectorSpace>& currentVs)
 
         ImGui::SameLine();
 
+        // Add Button
         if (ImGui::Button("Add Vector")) {
             currentVs->vectors.emplace_back(addVectorVals[0], addVectorVals[1]);
             selectVectorList.push_back(false);
@@ -30,36 +31,27 @@ void DrawVectorsWindow(std::unique_ptr<VectorSpace>& currentVs)
 
         ImGui::SameLine();
 
-        int selectIndex = -1;
-        for (int i = 0; i < selectVectorList.size(); ++i) {
-            if (selectVectorList[i]) {
-                selectIndex = i;
-                break;
-            }
-            selectIndex = -1;
-        }
-
-        ImGui::BeginDisabled(selectIndex == -1);
+        // Delete Button
+        bool noneSelected = std::all_of(selectVectorList.begin(), selectVectorList.end(), [](auto v) {return !v;});
+        ImGui::BeginDisabled(noneSelected);
         if (ImGui::Button(" - ")) {
-            currentVs->vectors.erase(currentVs->vectors.begin() + selectIndex);
-            selectVectorList.pop_back();
+            for (int n = 0; n < currentVs->vectors.size(); n++) {
+                if (selectVectorList[n]) {
+                    currentVs->vectors.erase(currentVs->vectors.begin() + n);
+                    selectVectorList.erase(selectVectorList.begin() + n);
+                    n--;
+                }
+            }
         }
         ImGui::EndDisabled();
 
-        if (ImGui::BeginListBox("##VectorList", ImVec2(400, 10 * ImGui::GetTextLineHeightWithSpacing()))) {
+        if (ImGui::BeginListBox("##VectorList", ImVec2(500, 10 * ImGui::GetTextLineHeightWithSpacing()))) {
             for (int n = 0; n < currentVs->vectors.size(); n++) {
-                float selectableHeight = ImGui::GetTextLineHeightWithSpacing() + 10;
-
-                if (ImGui::Selectable(("##vector" + std::to_string(n)).c_str(), selectVectorList[n], 0, ImVec2(400, selectableHeight))) {
-                    bool state = !selectVectorList[n];
-                    std::fill(selectVectorList.begin(), selectVectorList.end(), false);
-                    selectVectorList[n] = state;
-                }
-                ImGui::SetItemAllowOverlap();
-
-                ImGui::SetCursorPos(ImVec2(10, selectableHeight * n + 15));
                 ImGui::BeginGroup();
                 {
+                    std::string checkLabel = std::string("##SelectedBox") + std::to_string(n);
+                    ImGui::Checkbox(checkLabel.c_str(), (bool*)&selectVectorList[n]);
+                    ImGui::SameLine();
                     ImGui::Text("v%d:", n);
                     ImGui::SameLine();
 
@@ -76,7 +68,6 @@ void DrawVectorsWindow(std::unique_ptr<VectorSpace>& currentVs)
                     ImGui::SetItemAllowOverlap();
                 }
                 ImGui::EndGroup();
-                ImGui::SetItemAllowOverlap();
             }
             ImGui::EndListBox();
         }

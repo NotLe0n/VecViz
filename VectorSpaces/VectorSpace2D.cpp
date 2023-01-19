@@ -1,10 +1,9 @@
+#include <codecvt>
 #include <locale>
+#include <sstream>
 #include "VectorSpace2D.h"
 #include "../Drawing.h"
-#include "../UI/UIWindow.h"
-#include "codecvt"
 #include "../utils.h"
-#include <sstream>
 #include "../Settings.h"
 
 Camera2D camera;
@@ -13,7 +12,7 @@ VectorSpace2D::VectorSpace2D()
 {
     camera = Camera2D();
     camera.zoom = 50.0;
-    camera.offset = {(GetScreenWidth() - 300) / 2.0f, GetScreenHeight() / 2.0f};
+    camera.offset = {GetScreenWidth() / 2.0f, GetScreenHeight() / 2.0f};
 }
 
 VectorSpace2D::~VectorSpace2D()
@@ -77,7 +76,7 @@ void VectorSpace2D::Draw()
 
     BeginTextureMode(rt);
     {
-        ClearBackground(UIWindow::GetWindow().GetBackgroundColor());
+        ClearBackground(Color{20, 20, 20, 255});
         BeginMode2D(camera);
         {
             Settings& settings = Settings::GetSettings();
