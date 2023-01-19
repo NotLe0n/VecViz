@@ -14,6 +14,10 @@ void DrawVectorsWindow(std::unique_ptr<VectorSpace>& currentVs)
 
     Settings& settings = Settings::GetSettings();
 
+    if (!settings.showVectorsWindow) {
+        return;
+    }
+
     if (ImGui::Begin("Vectors", &settings.showVectorsWindow))
     {
         float numberInputWidth = ImGui::CalcTextSize("8.88888").x;

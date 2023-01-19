@@ -8,10 +8,15 @@ bool sinusMode;
 
 void DrawTransformationWindow(std::unique_ptr<VectorSpace>& currentVs)
 {
-    if (!currentVs)
+    if (!currentVs) {
         return;
+    }
 
     Settings& settings = Settings::GetSettings();
+
+    if (!settings.showTransformationsWindow) {
+        return;
+    }
 
     if (ImGui::Begin("Transformations", &settings.showTransformationsWindow))
     {
