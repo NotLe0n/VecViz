@@ -20,7 +20,7 @@ void DrawVectorSpaceWindow(std::unique_ptr<VectorSpace>& currentVs)
 
         float rtw = ImGui::GetWindowWidth();
         float rth = ImGui::GetWindowHeight() - ImGui::GetFrameHeight();
-        rlImGuiImageRect(renderTexture, rtw, rth, {0, ImGui::GetWindowPos().y, rtw, rth});
+        rlImGuiImageRect(renderTexture, rtw, rth, {0, 0, rtw, rth});
 
         if (ImGui::IsWindowHovered()) {
             currentVs->Update();
