@@ -18,4 +18,6 @@ ImGuiID DockFullScreen();
 // Draws text centered to the middle of the window
 void TextCentered(const std::string& text);
 
+ImVec4 ColorToImVec4(Color color);
+
 #endif //VECVIZ_UTILS_H

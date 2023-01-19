@@ -59,3 +59,7 @@ void TextCentered(const std::string& text)
     ImGui::SetCursorPos(ImVec2((windowSize.x - textWidth) * 0.5f, windowSize.y * 0.5f));
     ImGui::Text("%s", text.c_str());
 }
+
+ImVec4 ColorToImVec4(Color color) {
+    return {(color.r / 255.0f), (color.g / 255.0f), (color.b / 255.0f), (color.a / 255.0f)};
+}

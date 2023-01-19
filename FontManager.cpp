@@ -10,13 +10,13 @@
 void FontManager::LoadFonts()
 {
     std::vector<int> notoGlyphs = ParseGlyphFile(NotoGlyphsLocation);
-    std::vector<int> freeSerifGlyphs = ParseGlyphFile(FreeSerifGlyphsLocation);
+    //std::vector<int> freeSerifGlyphs = ParseGlyphFile(FreeSerifGlyphsLocation);
 
     font = LoadFontEx(NotoFontLocation, 128, notoGlyphs.data(), (int)notoGlyphs.size());
-    mathFont = LoadFontEx(FreeSerifFontLocation, 64, freeSerifGlyphs.data(), (int)freeSerifGlyphs.size());
+    //mathFont = LoadFontEx(FreeSerifFontLocation, 64, freeSerifGlyphs.data(), (int)freeSerifGlyphs.size());
 
     SetTextureFilter(font.texture, TEXTURE_FILTER_BILINEAR);
-    SetTextureFilter(mathFont.texture, TEXTURE_FILTER_BILINEAR);
+    //SetTextureFilter(mathFont.texture, TEXTURE_FILTER_BILINEAR);
 
     ImGuiIO& io = ImGui::GetIO();
     ImFontConfig config;
@@ -33,7 +33,7 @@ void FontManager::LoadFonts()
 void FontManager::UnloadFonts()
 {
     UnloadFont(font);
-    UnloadFont(mathFont);
+    //UnloadFont(mathFont);
 }
 
 std::vector<int> FontManager::ParseGlyphFile(const std::string& path)

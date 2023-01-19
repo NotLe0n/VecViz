@@ -54,22 +54,26 @@ void DrawVectorsWindow(std::unique_ptr<VectorSpace>& currentVs)
             for (int n = 0; n < currentVs->vectors.size(); n++) {
                 ImGui::BeginGroup();
                 {
-                    std::string checkLabel = std::string("##SelectedBox") + std::to_string(n);
-                    ImGui::Checkbox(checkLabel.c_str(), (bool*)&selectVectorList[n]);
+                    DrawVector& vector = currentVs->vectors[n];
+                    const std::string indexStr = std::to_string(n);
+
+                    ImGui::ColorEdit4(("##VectorColorSelect" + indexStr).c_str(), (float*)&vector.color, ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoLabel | ImGuiColorEditFlags_NoAlpha);
+
+                    ImGui::SameLine();
+
+                    ImGui::Checkbox(("##SelectedBox" + indexStr).c_str(), (bool*)&selectVectorList[n]);
                     ImGui::SameLine();
                     ImGui::Text("v%d:", n);
                     ImGui::SameLine();
 
-                    std::string xlabel = std::string("##VectorInputX") + std::to_string(n);
                     ImGui::SetNextItemWidth(numberInputWidth + 100);
-                    ImGui::InputFloat(xlabel.c_str(), &currentVs->vectors[n].vector.x, 1, 0, settings.GetDecimalPrecisionStr().c_str());
+                    ImGui::InputFloat(("##VectorInputX" + indexStr).c_str(), &vector.vector.x, 1, 0, settings.GetDecimalPrecisionStr().c_str());
                     ImGui::SetItemAllowOverlap();
 
                     ImGui::SameLine();
 
-                    std::string ylabel = std::string("##VectorInputY") + std::to_string(n);
                     ImGui::SetNextItemWidth(numberInputWidth + 100);
-                    ImGui::InputFloat(ylabel.c_str(), &currentVs->vectors[n].vector.y, 1, 0, settings.GetDecimalPrecisionStr().c_str());
+                    ImGui::InputFloat(("##VectorInputY" + indexStr).c_str(), &vector.vector.y, 1, 0, settings.GetDecimalPrecisionStr().c_str());
                     ImGui::SetItemAllowOverlap();
                 }
                 ImGui::EndGroup();

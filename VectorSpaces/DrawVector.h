@@ -2,6 +2,7 @@
 #define VECVIZ_DRAWVECTOR_H
 
 #include "raylib.h"
+#include "imgui.h"
 
 class DrawVector {
 private:
@@ -11,15 +12,16 @@ public:
     int vectorIndex = 0;
     Vector3 vector;
     Vector3 origin;
-    Color color{};
+    ImVec4 color;
 
 public:
     explicit DrawVector(float x = 0, float y = 0, float z = 0);
 
 private:
-    Color GetRandomColor() const;
+    [[nodiscard]] Color GetRandomColor() const;
 
 public:
+    [[nodiscard]] Color GetColor() const;
     [[nodiscard]] float X() const;
     [[nodiscard]] float Y() const;
     [[nodiscard]] float Z() const;

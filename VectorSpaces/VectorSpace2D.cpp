@@ -212,7 +212,7 @@ void VectorSpace2D::DrawVectors()
     }
 
     for (int i = 0; i < vectors.size(); i++) {
-        DrawAVector(vectors[i], u"\U0001D463" + FontManager::NumToSubscript(i), vectors[i].color, t); // v with subscript vector index
+        DrawAVector(vectors[i], u"\U00000475" + FontManager::NumToSubscript(i), vectors[i].GetColor(), t); // v with subscript vector index
     }
 }
 
@@ -237,7 +237,7 @@ void VectorSpace2D::DrawAVector(DrawVector vector, const std::u16string& name, C
             if (settings.drawVectorName) {
                 std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> convert;
                 std::string utf8_name = convert.to_bytes(name);
-                Drawing::DrawMathText(utf8_name, labelPosition.x, labelPosition.y, color, labelFontSize * 2);
+                Drawing::DrawText(utf8_name, labelPosition.x, labelPosition.y, color, labelFontSize * 2);
             }
 
             if (settings.drawVectorCoords) {

@@ -6,8 +6,7 @@
 
 class Drawing {
 public:
-    static void
-    DrawToOtherRt(Camera2D camera, RenderTexture rt, RenderTexture otherRt, const std::function<void()>& drawFunc)
+    static void DrawToOtherRt(Camera2D camera, RenderTexture rt, RenderTexture otherRt, const std::function<void()>& drawFunc)
     {
         EndMode2D();
         EndTextureMode();
@@ -44,8 +43,7 @@ public:
         DrawLineV(origin, pos, color);
     }
 
-    static void
-    DrawText(const std::string& text, const float& posX, const float& posY, const Color& color, const float& size)
+    static void DrawText(const std::string& text, const float& posX, const float& posY, const Color& color, const float& size)
     {
         DrawTextEx(FontManager::font, text.c_str(), {posX, posY}, size, 0, color);
     }
@@ -55,11 +53,11 @@ public:
         DrawTextEx(FontManager::font, text.c_str(), pos, size, 0, color);
     }
 
-    static void
+    /*static void
     DrawMathText(const std::string& text, const float& posX, const float& posY, const Color& color, const float& size)
     {
         DrawTextEx(FontManager::mathFont, text.c_str(), {posX, posY}, size, 0, color);
-    }
+    }*/
 };
 
 

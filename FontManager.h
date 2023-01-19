@@ -11,7 +11,7 @@ class FontManager {
     static constexpr auto FreeSerifGlyphsLocation = "./Fonts/FreeSerif.glyphs";
 
 public:
-    static inline Font mathFont;
+    //static inline Font mathFont;
     static inline Font font;
 
 private:

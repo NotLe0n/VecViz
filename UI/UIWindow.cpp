@@ -76,6 +76,8 @@ void StyleImGui()
     colors[ImGuiCol_ModalWindowDimBg]       = ImVec4(1.00f, 1.00f, 1.00f, 0.35f);
 
     ImGuiStyle& style = ImGui::GetStyle();
+    style.WindowRounding = 5;
+    style.ChildRounding = 5;
     style.FrameRounding = 5;
     style.GrabRounding = 10;
     style.TabRounding = 10;
