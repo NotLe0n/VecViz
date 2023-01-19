@@ -2,6 +2,7 @@
 #include "imgui.h"
 #include "SubWindows.h"
 #include "../Settings.h"
+#include <algorithm>
 
 float addVectorVals[] = {0, 0};
 std::vector<char> selectVectorList = {}; // replacement for vector<bool>
