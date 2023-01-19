@@ -6,6 +6,8 @@
 
 bool DrawMenuBar(std::unique_ptr<VectorSpace>& currentVs)
 {
+    Settings& settings = Settings::GetSettings();
+
     if (ImGui::BeginMenuBar()) {
         if (ImGui::BeginMenu("File")) {
             if (ImGui::BeginMenu("New vector space")) {
@@ -22,10 +24,10 @@ bool DrawMenuBar(std::unique_ptr<VectorSpace>& currentVs)
             }
 
             if (ImGui::MenuItem("Open...")) {
-
+                // TODO
             }
             if (ImGui::MenuItem("Save...")) {
-
+                // TODO
             }
 
             if (ImGui::MenuItem("Close all vector spaces")) {
@@ -45,14 +47,13 @@ bool DrawMenuBar(std::unique_ptr<VectorSpace>& currentVs)
         }
 
         if (ImGui::BeginMenu("View")) {
-            ImGui::MenuItem("Test");
+            ImGui::MenuItem("Show vectors window", nullptr, &settings.showVectorsWindow);
+            ImGui::MenuItem("Show transformations window", nullptr, &settings.showTransformationsWindow);
 
             ImGui::EndMenu();
         }
 
         if (ImGui::BeginMenu("Options")) {
-            Settings& settings = Settings::GetSettings();
-
             ImGui::Checkbox("Draw grid", &settings.drawGrid);
             ImGui::Checkbox("Draw axis", &settings.drawAxis);
             ImGui::Checkbox("Draw vector arrows", &settings.drawVectorArrow);

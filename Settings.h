@@ -5,6 +5,7 @@
 
 class Settings {
 public:
+    // options settings
     bool drawGrid = true;
     bool drawAxis = true;
     bool drawVectorCoords = true;
@@ -14,6 +15,10 @@ public:
     bool drawVectorPoint = true;
     bool drawBasisVectors = false;
     int decimalPrecision = 3;
+
+    // view settings
+    bool showVectorsWindow = true;
+    bool showTransformationsWindow = true;
 
 private:
     Settings() = default;

@@ -17,7 +17,7 @@ public:
     explicit DrawVector(float x = 0, float y = 0, float z = 0);
 
 private:
-    Color GetRandomColor();
+    Color GetRandomColor() const;
 
 public:
     [[nodiscard]] float X() const;

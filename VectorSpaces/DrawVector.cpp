@@ -11,7 +11,7 @@ DrawVector::DrawVector(float x, float y, float z) : vector({x, y, z}), origin(Ve
     color = GetRandomColor();
 }
 
-Color DrawVector::GetRandomColor()
+Color DrawVector::GetRandomColor() const
 {
     float offset = GetRandomValue(0, 180);
     float h = (int)(offset + vectorIndex * 137.508f) % 360; // use golden angle approximation

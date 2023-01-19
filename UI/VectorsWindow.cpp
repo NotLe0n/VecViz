@@ -14,7 +14,7 @@ void DrawVectorsWindow(std::unique_ptr<VectorSpace>& currentVs)
 
     Settings& settings = Settings::GetSettings();
 
-    ImGui::Begin("Vectors");
+    if (ImGui::Begin("Vectors", &settings.showVectorsWindow))
     {
         float numberInputWidth = ImGui::CalcTextSize("8.88888").x;
 
@@ -80,6 +80,6 @@ void DrawVectorsWindow(std::unique_ptr<VectorSpace>& currentVs)
             }
             ImGui::EndListBox();
         }
+        ImGui::End();
     }
-    ImGui::End();
 }
