@@ -68,7 +68,7 @@ float labelFontSize;
 
 void VectorSpace2D::Draw()
 {
-    worldStart = VecToWorldSpace({drawOffset.x, -drawOffset.y}, camera);
+    worldStart = VecToWorldSpace({0, 0}, camera);
     worldEnd = VecToWorldSpace({(float)GetScreenWidth(), (float)GetScreenHeight()}, camera);
     labelFontSize = sqrtf(camera.zoom * 3);
     if (labelFontSize > 48) {
@@ -94,7 +94,7 @@ void VectorSpace2D::Draw()
         }
         EndMode2D();
 
-        DrawTexture(textTexture.texture, -drawOffset.x, -drawOffset.y, WHITE);
+        DrawTexture(textTexture.texture, 0, 0, WHITE);
     }
     EndTextureMode();
 
@@ -129,12 +129,10 @@ void VectorSpace2D::ApplyTransformation(Matrix transformationMatrix)
 void VectorSpace2D::DrawOrigGrid()
 {
     for (int i = (int)worldStart.y; i > worldEnd.y; i--) {
-        DrawRay(Ray{{worldStart.x, float(i), 0},
-                    {1,            0,        0}}, DARKGRAY);
+        DrawRay(Ray{{worldStart.x, float(i), 0}, {1, 0, 0}}, DARKGRAY);
     }
     for (int i = (int)worldEnd.x; i > worldStart.x; i--) {
-        DrawRay(Ray{{float(i), worldEnd.y, 0},
-                    {0,        1,          0}}, DARKGRAY);
+        DrawRay(Ray{{float(i), worldEnd.y, 0}, {0, 1, 0}}, DARKGRAY);
     }
 }
 
@@ -197,13 +195,13 @@ void VectorSpace2D::DrawXAxisTicks()
 
 Vector2 VectorSpace2D::VecToWorldSpace(Vector2 pos, Camera2D cam)
 {
-    return GetScreenToWorld2D({pos.x - drawOffset.x, GetMonitorHeight(GetCurrentMonitor()) - pos.y - drawOffset.y}, cam);
+    return GetScreenToWorld2D({pos.x, GetMonitorHeight(GetCurrentMonitor()) - pos.y}, cam);
 }
 
 Vector2 VectorSpace2D::WorldVecToScreenSpace(Vector2 pos, Camera2D cam)
 {
     Vector2 trans = GetWorldToScreen2D(pos, cam);
-    return {trans.x + drawOffset.x, GetMonitorHeight(GetCurrentMonitor()) - trans.y - drawOffset.y};
+    return {trans.x, GetMonitorHeight(GetCurrentMonitor()) - trans.y};
 }
 
 void VectorSpace2D::DrawVectors()
