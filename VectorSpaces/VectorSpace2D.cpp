@@ -82,12 +82,22 @@ void VectorSpace2D::Draw()
         {
             Settings& settings = Settings::GetSettings();
             if (settings.drawGrid) {
-                DrawOrigGrid();
+                if (settings.drawOrigGrid){
+                    DrawOrigGrid();
+                }
+                if (settings.drawTransformedGrid) {
+                    DrawTransformedGrid();
+                }
             }
 
             if (settings.drawAxis) {
                 DrawYAxis();
                 DrawXAxis();
+                Drawing::DrawToOtherRt(camera, rt, textTexture, []{
+                    Vector2 textSize = Drawing::MeasureText("0", labelFontSize);
+                    Vector2 pos = VectorSpace2D::WorldVecToScreenSpace({0, 0}, camera);
+                    Drawing::DrawText("0", pos.x - textSize.x - 5, pos.y + 5, WHITE, labelFontSize);
+                });
             }
 
             DrawVectors();
@@ -136,6 +146,29 @@ void VectorSpace2D::DrawOrigGrid()
     }
 }
 
+void VectorSpace2D::DrawTransformedGrid()
+{
+    Vector2 dirX1 = V2Transform({1, 0}, MatrixLerp(transformationMatrix, t));
+    Vector2 dirX2 = V2Transform({-1, 0}, MatrixLerp(transformationMatrix, t));
+
+    Vector2 dirY1 = V2Transform({0, 1}, MatrixLerp(transformationMatrix, t));
+    Vector2 dirY2 = V2Transform({0, -1}, MatrixLerp(transformationMatrix, t));
+
+    Color col = {164, 170, 70, 255};
+    for (int y = GetScreenHeight(); y > -GetScreenHeight(); y--) {
+        Vector2 pos = V2Transform({0, float(y)}, MatrixLerp(transformationMatrix, t));
+
+        DrawRay(Ray{V2ToV3(pos), V2ToV3(dirX1)}, col);
+        DrawRay(Ray{V2ToV3(pos), V2ToV3(dirX2)}, col);
+    }
+    for (int x = GetScreenWidth(); x > -GetScreenWidth(); x--) {
+        Vector2 pos = V2Transform({float(x), 0}, MatrixLerp(transformationMatrix, t));
+
+        DrawRay(Ray{V2ToV3(pos), V2ToV3(dirY1)}, col);
+        DrawRay(Ray{V2ToV3(pos), V2ToV3(dirY2)}, col);
+    }
+}
+
 void VectorSpace2D::DrawYAxis()
 {
     Vector3 dir1 = {0, 1, 0};
@@ -150,16 +183,18 @@ void VectorSpace2D::DrawYAxis()
 void VectorSpace2D::DrawYAxisTicks()
 {
     for (int i = (int)worldStart.y; i > worldEnd.y; i--) {
-        Vector2 a = {10 / camera.zoom, (float)i};
-        Vector2 b = {-10 / camera.zoom, (float)i};
+        Vector2 a = {.2f, (float)i};
+        Vector2 b = {-.2f, (float)i};
 
         // Draw Y axis ticks
         DrawLineV(a, b, WHITE);
 
-        // Draw X axis tick labels
+        // Draw Y axis tick labels
+        if (i == 0) continue;
         Drawing::DrawToOtherRt(camera, rt, textTexture, [&i, &b] {
+            Vector2 textSize = Drawing::MeasureText(std::to_string(i), labelFontSize);
             Vector2 pos = VectorSpace2D::WorldVecToScreenSpace(b, camera);
-            Drawing::DrawText(std::to_string(i), pos, WHITE, labelFontSize);
+            Drawing::DrawText(std::to_string(i), pos.x - textSize.x - 5, pos.y - textSize.y / 2, WHITE, labelFontSize);
         });
     }
 }
@@ -178,8 +213,8 @@ void VectorSpace2D::DrawXAxis()
 void VectorSpace2D::DrawXAxisTicks()
 {
     for (int i = (int)worldStart.x; i < worldEnd.x; i++) {
-        Vector2 a = {(float)i, 10 / camera.zoom};
-        Vector2 b = {(float)i, -10 / camera.zoom};
+        Vector2 a = {(float)i, .2f};
+        Vector2 b = {(float)i, -.2f};
 
         // Draw X axis ticks
         DrawLineV(a, b, WHITE);
@@ -187,8 +222,9 @@ void VectorSpace2D::DrawXAxisTicks()
         // Draw X axis tick labels
         if (i == 0) continue;
         Drawing::DrawToOtherRt(camera, rt, textTexture, [&i, &b] {
+            Vector2 textSize = Drawing::MeasureText(std::to_string(i), labelFontSize);
             Vector2 pos = VectorSpace2D::WorldVecToScreenSpace(b, camera);
-            Drawing::DrawText(std::to_string(i), pos, WHITE, labelFontSize);
+            Drawing::DrawText(std::to_string(i), pos.x - textSize.x / 2, pos.y, WHITE, labelFontSize);
         });
     }
 }
@@ -220,7 +256,7 @@ void VectorSpace2D::DrawVectors()
 void VectorSpace2D::DrawAVector(DrawVector vector, const std::u16string& name, Color color, float t)
 {
     Settings& settings = Settings::GetSettings();
-    Vector2 transformedPos = Vector2Transform({vector.vector.x, vector.vector.y}, MatrixLerp(transformationMatrix, t));
+    Vector2 transformedPos = V2Transform({vector.vector.x, vector.vector.y}, MatrixLerp(transformationMatrix, t));
 
     if (settings.drawVectorPoint) {
         DrawCircleV(transformedPos, 3 / camera.zoom, color);
@@ -233,7 +269,7 @@ void VectorSpace2D::DrawAVector(DrawVector vector, const std::u16string& name, C
     if (settings.drawVectorLabel) {
         Drawing::DrawToOtherRt(camera, rt, textTexture, [&name, &vector, &transformedPos, &color, &settings] {
             Vector2 screenPos = VectorSpace2D::WorldVecToScreenSpace(transformedPos, camera);
-            Vector2 labelPosition = {screenPos.x + .1f * camera.zoom, screenPos.y - .2f * camera.zoom};
+            Vector2 labelPosition = {screenPos.x + 10.0f / camera.zoom, screenPos.y - 20.0f / camera.zoom};
 
             if (settings.drawVectorName) {
                 std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> convert;
@@ -245,7 +281,20 @@ void VectorSpace2D::DrawAVector(DrawVector vector, const std::u16string& name, C
                 std::stringstream stringBuilder;
                 stringBuilder.precision(settings.decimalPrecision);
                 stringBuilder << "(" << vector.X() << ", " << vector.Y() << ")";
-                Drawing::DrawText(stringBuilder.str(), labelPosition.x + 2, labelPosition.y + .35f * camera.zoom, color, labelFontSize);
+
+                Drawing::DrawText(stringBuilder.str(), labelPosition.x + .3f * camera.zoom, labelPosition.y, color, labelFontSize);
+            }
+
+            if (settings.showCoordinateVector) {
+                std::stringstream stringBuilder;
+                stringBuilder.precision(settings.decimalPrecision);
+                stringBuilder << "(" << transformedPos.x << ", " << transformedPos.y << ")";
+
+                float yOffset = 0;
+                if (settings.drawVectorCoords) {
+                    yOffset += .15;
+                }
+                Drawing::DrawText(stringBuilder.str(), labelPosition.x + .3f * camera.zoom, labelPosition.y + yOffset * camera.zoom, color, labelFontSize);
             }
         });
     }

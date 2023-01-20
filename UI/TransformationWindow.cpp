@@ -5,6 +5,7 @@
 
 float transformMatrixVals[9] = {1, 0, 0, 0, 1, 0, 0, 0, 1,};
 bool sinusMode;
+bool autoApplyTransformation;
 
 void DrawTransformationWindow(std::unique_ptr<VectorSpace>& currentVs)
 {
@@ -50,6 +51,16 @@ void DrawTransformationWindow(std::unique_ptr<VectorSpace>& currentVs)
                    transformMatrixVals[2], transformMatrixVals[5], transformMatrixVals[8], 0,
                    0, 0, 0, 1
             });
+        }
+        ImGui::SameLine();
+        ImGui::Checkbox("Auto apply", &autoApplyTransformation);
+        if (autoApplyTransformation) {
+            currentVs->ApplyTransformation({
+                   transformMatrixVals[0], transformMatrixVals[3], transformMatrixVals[6], 0,
+                   transformMatrixVals[1], transformMatrixVals[4], transformMatrixVals[7], 0,
+                   transformMatrixVals[2], transformMatrixVals[5], transformMatrixVals[8], 0,
+                   0, 0, 0, 1
+           });
         }
         ImGui::End();
     }

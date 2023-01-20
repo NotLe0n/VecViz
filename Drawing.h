@@ -13,6 +13,8 @@ namespace Drawing {
 
     void DrawText(const std::string& text, Vector2 pos, const Color& color, const float& size);
 
+    Vector2 MeasureText(const std::string& text, float fontSize);
+
     /*static void DrawMathText(const std::string& text, const float& posX, const float& posY, const Color& color, const float& size);*/
 }
 

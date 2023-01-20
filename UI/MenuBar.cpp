@@ -54,12 +54,15 @@ bool DrawMenuBar(std::unique_ptr<VectorSpace>& currentVs)
         }
 
         if (ImGui::BeginMenu("Options")) {
+            ImGui::Checkbox("Draw untransformed grid", &settings.drawOrigGrid);
+            ImGui::Checkbox("Draw transformed grid", &settings.drawTransformedGrid);
             ImGui::Checkbox("Draw grid", &settings.drawGrid);
             ImGui::Checkbox("Draw axis", &settings.drawAxis);
             ImGui::Checkbox("Draw vector arrows", &settings.drawVectorArrow);
             ImGui::Checkbox("Draw vector point", &settings.drawVectorPoint);
             ImGui::Checkbox("Draw vector name", &settings.drawVectorName);
             ImGui::Checkbox("Draw vector coordinates", &settings.drawVectorCoords);
+            ImGui::Checkbox("Draw coordinate vector position", &settings.showCoordinateVector);
             ImGui::Checkbox("Draw vector label", &settings.drawVectorLabel);
             ImGui::Checkbox("Draw basis vector(s)", &settings.drawBasisVectors);
 

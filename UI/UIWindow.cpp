@@ -8,7 +8,6 @@ namespace UIWindow
 
     bool Init()
     {
-        SetWindowState(FLAG_MSAA_4X_HINT);
         InitWindow(800, 600, "Vector Visualization");
         SetWindowState(FLAG_WINDOW_RESIZABLE);
         MaximizeWindow();
@@ -108,15 +107,13 @@ namespace UIWindow
     {
         while (!WindowShouldClose()) {
             BeginDrawing();
-            {
-                rlImGuiBegin();
-                {
-                    if (!drawFunc()) {
-                        break;
-                    }
-                }
-                rlImGuiEnd();
+            rlImGuiBegin();
+
+            if (!drawFunc()) {
+                break;
             }
+
+            rlImGuiEnd();
             EndDrawing();
         }
     }

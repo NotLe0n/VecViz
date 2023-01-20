@@ -22,6 +22,7 @@ public:
 
 private:
     void DrawOrigGrid();
+    void DrawTransformedGrid();
 
     void DrawYAxis();
     void DrawYAxisTicks();

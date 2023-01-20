@@ -12,6 +12,10 @@ std::vector<std::string> split(std::string s, const std::string& del);
 // Lerps a vector from the identity to 'm' with the control value 't'.
 Matrix MatrixLerp(Matrix m, float t);
 
+constexpr Vector3 V2ToV3(const Vector2& vector) {
+    return {vector.x, vector.y, 0};
+}
+
 // Creates a new fullscreen dock-space window.
 ImGuiID DockFullScreen();
 

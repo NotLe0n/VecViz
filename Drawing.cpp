@@ -51,6 +51,10 @@ namespace Drawing
         DrawTextEx(FontManager::GetFont(), text.c_str(), pos, size, 0, color);
     }
 
+    Vector2 MeasureText(const std::string& text, float fontSize) {
+        return MeasureTextEx(FontManager::GetFont(), text.c_str(), fontSize, 0);
+    }
+
     /* void DrawMathText(const std::string& text, const float& posX, const float& posY, const Color& color, const float& size)
     {
         DrawTextEx(FontManager::mathFont, text.c_str(), {posX, posY}, size, 0, color);

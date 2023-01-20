@@ -7,6 +7,8 @@
 class Settings : public Singleton<Settings> {
 public:
     // options settings
+    bool drawOrigGrid = true;
+    bool drawTransformedGrid = false;
     bool drawGrid = true;
     bool drawAxis = true;
     bool drawVectorCoords = true;
@@ -16,6 +18,7 @@ public:
     bool drawVectorPoint = true;
     bool drawBasisVectors = false;
     int decimalPrecision = 3;
+    bool showCoordinateVector = true;
 
     // view settings
     bool showVectorsWindow = true;
