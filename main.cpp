@@ -8,11 +8,11 @@
 int main()
 {
     // create window
-    UIWindow& wnd = UIWindow::GetWindow();
+    UIWindow::Init();
 
     std::unique_ptr<VectorSpace> currentVs;
 
-    wnd.Draw([&currentVs] {
+    UIWindow::Draw([&currentVs] {
         ImGuiID dock_id = DockFullScreen();
 
         DrawVectorsWindow(currentVs);

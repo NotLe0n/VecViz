@@ -1,9 +1,10 @@
 #ifndef VECVIZ_SETTINGS_H
 #define VECVIZ_SETTINGS_H
 
+#include "Singleton.h"
 #include <string>
 
-class Settings {
+class Settings : public Singleton<Settings> {
 public:
     // options settings
     bool drawGrid = true;
@@ -21,18 +22,13 @@ public:
     bool showTransformationsWindow = true;
 
 private:
-    Settings() = default;
+    friend class Singleton<Settings>;
 
 public:
-    static Settings& GetSettings();
+    static Settings& GetSettings() {
+        return GetInstance();
+    }
 
-    Settings(Settings&&) = delete;
-    Settings(Settings&) = delete;
-
-    void operator=(const Settings&) = delete;
-    void operator=(const Settings&&) = delete;
-
-public:
     [[nodiscard]] std::string GetDecimalPrecisionStr() const;
 };
 

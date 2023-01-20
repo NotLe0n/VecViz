@@ -2,30 +2,12 @@
 #define VECVIZ_UIWINDOW_H
 
 #include <functional>
-#include <string>
-#include "raylib.h"
 
-// Singleton wraps the creation of Raylib window instance and draw loop
-class UIWindow {
-
-private:
-    UIWindow(const std::string& title, const ConfigFlags& flags);
-
-public:
-    UIWindow(UIWindow&&) = delete;
-    UIWindow(UIWindow&) = delete;
-
-    void operator=(const UIWindow&) = delete;
-    void operator=(const UIWindow&&) = delete;
-
-public:
-    static UIWindow& GetWindow();
-
+namespace UIWindow {
+    void Init();
     // Begins draw loop
     void Draw(const std::function<bool()>&);
-
-    // NOTE: Make sure to close all ImGui windows beforehand
-    static void CloseCurrentWindow();
-};
+    void CloseCurrentWindow();
+}
 
 #endif //VECVIZ_UIWINDOW_H
