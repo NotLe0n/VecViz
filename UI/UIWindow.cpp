@@ -4,12 +4,31 @@
 
 namespace UIWindow
 {
-    void Init()
+    static void StyleImGui();
+
+    bool Init()
     {
         SetWindowState(FLAG_MSAA_4X_HINT);
         InitWindow(800, 600, "Vector Visualization");
         SetWindowState(FLAG_WINDOW_RESIZABLE);
         MaximizeWindow();
+
+        if (!IsWindowReady()) {
+            return false;
+        }
+
+        SetTargetFPS(120);
+
+        rlImGuiSetup(true);
+
+        FontManager::LoadFonts();
+
+        ImGuiIO& io = ImGui::GetIO();
+        io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+
+        StyleImGui();
+
+        return true;
     }
 
     static void StyleImGui()
@@ -87,17 +106,6 @@ namespace UIWindow
 
     void Draw(const std::function<bool()>& drawFunc)
     {
-        SetTargetFPS(120);
-
-        rlImGuiSetup(true);
-
-        FontManager::LoadFonts();
-
-        ImGuiIO& io = ImGui::GetIO();
-        io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-
-        StyleImGui();
-
         while (!WindowShouldClose()) {
             BeginDrawing();
             {

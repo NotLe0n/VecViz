@@ -8,9 +8,12 @@
 int main()
 {
     // create window
-    UIWindow::Init();
+    if (!UIWindow::Init()){
+        return -1;
+    }
 
     std::unique_ptr<VectorSpace> currentVs;
+
 
     UIWindow::Draw([&currentVs] {
         ImGuiID dock_id = DockFullScreen();

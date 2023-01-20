@@ -5,6 +5,7 @@
 #include "../Drawing.h"
 #include "../utils.h"
 #include "../Settings.h"
+#include "../FontManager.h"
 
 Camera2D camera;
 

@@ -4,7 +4,7 @@
 #include <functional>
 
 namespace UIWindow {
-    void Init();
+    bool Init();
     // Begins draw loop
     void Draw(const std::function<bool()>&);
     void CloseCurrentWindow();
