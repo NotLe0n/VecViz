@@ -6,7 +6,11 @@
 
 class Settings : public Singleton<Settings> {
 public:
-    // options settings
+    // general options
+    int targetFPS = 60;
+    int decimalPrecision = 3;
+
+    // vector space options
     bool drawOrigGrid = true;
     bool drawTransformedGrid = false;
     bool drawGrid = true;
@@ -17,12 +21,12 @@ public:
     bool drawVectorArrow = true;
     bool drawVectorPoint = true;
     bool drawBasisVectors = false;
-    int decimalPrecision = 3;
-    bool showCoordinateVector = true;
+    bool drawCoordinateVectorPos = true;
 
     // view settings
     bool showVectorsWindow = true;
     bool showTransformationsWindow = true;
+    bool showOptionsWindow = false;
 
 private:
     friend class Singleton<Settings>;

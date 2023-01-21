@@ -21,6 +21,7 @@ int main()
         DrawVectorsWindow(currentVs);
         DrawTransformationWindow(currentVs);
         DrawVectorSpaceWindow(currentVs);
+        DrawOptionsWindow();
 
         static bool first_time = true;
         if (first_time) {

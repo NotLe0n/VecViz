@@ -285,7 +285,7 @@ void VectorSpace2D::DrawAVector(DrawVector vector, const std::u16string& name, C
                 Drawing::DrawText(stringBuilder.str(), labelPosition.x + .3f * camera.zoom, labelPosition.y, color, labelFontSize);
             }
 
-            if (settings.showCoordinateVector) {
+            if (settings.drawCoordinateVectorPos) {
                 std::stringstream stringBuilder;
                 stringBuilder.precision(settings.decimalPrecision);
                 stringBuilder << "(" << transformedPos.x << ", " << transformedPos.y << ")";
