@@ -34,7 +34,7 @@ void DrawOptionsWindow() {
                 ImGui::Checkbox("Draw coordinate vector position", &settings.drawCoordinateVectorPos);
                 ImGui::Checkbox("Draw vector label", &settings.drawVectorLabel);
                 ImGui::Checkbox("Draw basis vector(s)", &settings.drawBasisVectors);
-                
+
                 ImGui::EndTabItem();
             }
             ImGui::EndTabBar();

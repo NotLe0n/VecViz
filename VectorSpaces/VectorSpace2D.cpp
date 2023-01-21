@@ -27,6 +27,12 @@ int VectorSpace2D::GetDimension()
     return 2;
 }
 
+
+Vector2 worldStart;
+Vector2 worldEnd;
+const float labelFontSize = 18;
+int step = 1;
+
 void VectorSpace2D::Update()
 {
     // dragging code
@@ -56,25 +62,27 @@ void VectorSpace2D::Update()
         camera.target = Vector2Subtract(mouseWorldPos, Vector2Scale({drawOffset.x, -drawOffset.y}, 1 / camera.zoom));
 
         // Zoom increment
-        camera.zoom = Clamp(camera.zoom + wheel * 2, 25, 300);
+        camera.zoom = Clamp(camera.zoom + wheel / (step == 8 ? 4 : step), 5, 300);
     }
+
+    if (camera.zoom < 15) {
+        step = 8;
+    }
+    else if (camera.zoom < 35) {
+        step = 2;
+    }
+    else {
+        step = 1;
+    }
+
+    worldStart = VecToWorldSpace({0, 0}, camera);
+    worldEnd = VecToWorldSpace({(float)GetScreenWidth(), (float)GetScreenHeight()}, camera);
 }
 
-Vector2 worldStart;
-Vector2 worldEnd;
-float labelFontSize;
-
-//void DrawDebugInfo();
+void DrawDebugInfo();
 
 void VectorSpace2D::Draw()
 {
-    worldStart = VecToWorldSpace({0, 0}, camera);
-    worldEnd = VecToWorldSpace({(float)GetScreenWidth(), (float)GetScreenHeight()}, camera);
-    labelFontSize = sqrtf(camera.zoom * 3);
-    if (labelFontSize > 48) {
-        labelFontSize = 48;
-    }
-
     BeginTextureMode(rt);
     {
         ClearBackground(Color{20, 20, 20, 255});
@@ -82,7 +90,7 @@ void VectorSpace2D::Draw()
         {
             Settings& settings = Settings::GetSettings();
             if (settings.drawGrid) {
-                if (settings.drawOrigGrid){
+                if (settings.drawOrigGrid) {
                     DrawOrigGrid();
                 }
                 if (settings.drawTransformedGrid) {
@@ -93,6 +101,8 @@ void VectorSpace2D::Draw()
             if (settings.drawAxis) {
                 DrawYAxis();
                 DrawXAxis();
+
+                // Origin label
                 Drawing::DrawToOtherRt(camera, rt, textTexture, []{
                     Vector2 textSize = Drawing::MeasureText("0", labelFontSize);
                     Vector2 pos = VectorSpace2D::WorldVecToScreenSpace({0, 0}, camera);
@@ -110,7 +120,7 @@ void VectorSpace2D::Draw()
 
     BeginTextureMode(textTexture);
     ClearBackground({0, 0, 0, 0});
-    //DrawDebugInfo();
+    DrawDebugInfo();
     EndTextureMode();
 }
 
@@ -123,7 +133,7 @@ void VectorSpace2D::ApplyTransformation(Matrix transformationMatrix)
     BasisY.vector = {transformationMatrix.m4, transformationMatrix.m5, 0};
 }
 
-/*void DrawDebugInfo() {
+void DrawDebugInfo() {
     std::stringstream stringBuilder;
     stringBuilder.precision(3);
     stringBuilder <<
@@ -131,18 +141,35 @@ void VectorSpace2D::ApplyTransformation(Matrix transformationMatrix)
     "Monitor pysical dim: [" << GetMonitorPhysicalWidth(GetCurrentMonitor()) << ", " << GetMonitorPhysicalHeight(GetCurrentMonitor()) << "]\n" <<
     "Screen dim: [" << GetScreenWidth() << ", " << GetScreenHeight() << "]\n" <<
     "Render dim: [" << GetRenderWidth() << ", " << GetRenderHeight() << "]\n" <<
-    "Window scale DPI: [" << GetWindowScaleDPI().x << ", " << GetWindowScaleDPI().y << "]\n";
+    "Window scale DPI: [" << GetWindowScaleDPI().x << ", " << GetWindowScaleDPI().y << "]\n" <<
+    "Camera zoom: " << camera.zoom;
 
     Drawing::DrawText(stringBuilder.str(), VectorSpace::drawOffset.x, 0, YELLOW, 20);
-}*/
+}
 
 void VectorSpace2D::DrawOrigGrid()
 {
-    for (int i = (int)worldStart.y; i > worldEnd.y; i--) {
-        DrawRay(Ray{{worldStart.x, float(i), 0}, {1, 0, 0}}, DARKGRAY);
+    Vector3 unitX = {1, 0, 0};
+    Vector3 unitY = {0, 1, 0};
+
+    // draw minor grid lines
+    Color minorLineColor = {33, 33, 33, 255};
+    for (int i = 0; i <= 3; ++i) {
+        for (int x = (int)worldStart.x - ((int)worldStart.x % step); x < worldEnd.x; x += step) {
+            DrawRay(Ray{{x + 0.25f * i * step, worldEnd.y, 0}, unitY}, minorLineColor);
+        }
+        for (int y = (int)worldStart.y - ((int)worldStart.y % step); y > worldEnd.y; y -= step) {
+            DrawRay(Ray{{worldStart.x, y + 0.25f * i * step, 0}, unitX}, minorLineColor);
+        }
     }
-    for (int i = (int)worldEnd.x; i > worldStart.x; i--) {
-        DrawRay(Ray{{float(i), worldEnd.y, 0}, {0, 1, 0}}, DARKGRAY);
+
+    // Draw major grid lines
+    Color majorLineColor = DARKGRAY;
+    for (int y = (int)worldStart.y - ((int)worldStart.y % step); y > worldEnd.y; y -= step) {
+        DrawRay(Ray{{worldStart.x, (float)y, 0}, unitX}, majorLineColor);
+    }
+    for (int x = (int)worldStart.x - ((int)worldStart.x % step); x < worldEnd.x; x += step) {
+        DrawRay(Ray{{(float)x, worldEnd.y, 0}, unitY}, majorLineColor);
     }
 }
 
@@ -154,14 +181,14 @@ void VectorSpace2D::DrawTransformedGrid()
     Vector2 dirY1 = V2Transform({0, 1}, MatrixLerp(transformationMatrix, t));
     Vector2 dirY2 = V2Transform({0, -1}, MatrixLerp(transformationMatrix, t));
 
-    Color col = {164, 170, 70, 255};
-    for (int y = GetScreenHeight(); y > -GetScreenHeight(); y--) {
+    Color col = {96, 125, 139, 255};
+    for (int y = GetScreenHeight() - (GetScreenHeight() % step); y > -GetScreenHeight(); y -= step) {
         Vector2 pos = V2Transform({0, float(y)}, MatrixLerp(transformationMatrix, t));
 
         DrawRay(Ray{V2ToV3(pos), V2ToV3(dirX1)}, col);
         DrawRay(Ray{V2ToV3(pos), V2ToV3(dirX2)}, col);
     }
-    for (int x = GetScreenWidth(); x > -GetScreenWidth(); x--) {
+    for (int x = GetScreenWidth() - (GetScreenWidth() % step); x > -GetScreenWidth(); x -= step) {
         Vector2 pos = V2Transform({float(x), 0}, MatrixLerp(transformationMatrix, t));
 
         DrawRay(Ray{V2ToV3(pos), V2ToV3(dirY1)}, col);
@@ -182,19 +209,20 @@ void VectorSpace2D::DrawYAxis()
 
 void VectorSpace2D::DrawYAxisTicks()
 {
-    for (int i = (int)worldStart.y; i > worldEnd.y; i--) {
-        Vector2 a = {.2f, (float)i};
-        Vector2 b = {-.2f, (float)i};
+    int start = (int)worldStart.y - ((int)worldStart.y % step); // corrected for uneven worldStart on step = 2
+    for (int y = start; y > worldEnd.y; y -= step) {
+        Vector2 a = {.2f, (float)y};
+        Vector2 b = {-.2f, (float)y};
 
         // Draw Y axis ticks
         DrawLineV(a, b, WHITE);
 
         // Draw Y axis tick labels
-        if (i == 0) continue;
-        Drawing::DrawToOtherRt(camera, rt, textTexture, [&i, &b] {
-            Vector2 textSize = Drawing::MeasureText(std::to_string(i), labelFontSize);
+        if (y == 0) continue;
+        Drawing::DrawToOtherRt(camera, rt, textTexture, [&y, &b] {
+            Vector2 textSize = Drawing::MeasureText(std::to_string(y), labelFontSize);
             Vector2 pos = VectorSpace2D::WorldVecToScreenSpace(b, camera);
-            Drawing::DrawText(std::to_string(i), pos.x - textSize.x - 5, pos.y - textSize.y / 2, WHITE, labelFontSize);
+            Drawing::DrawText(std::to_string(y), pos.x - textSize.x - 5, pos.y - textSize.y / 2, WHITE, labelFontSize);
         });
     }
 }
@@ -212,19 +240,20 @@ void VectorSpace2D::DrawXAxis()
 
 void VectorSpace2D::DrawXAxisTicks()
 {
-    for (int i = (int)worldStart.x; i < worldEnd.x; i++) {
-        Vector2 a = {(float)i, .2f};
-        Vector2 b = {(float)i, -.2f};
+    int start = (int)worldStart.x - ((int)worldStart.x % step); // corrected for uneven worldStart on step = 2
+    for (int x = start; x < worldEnd.x; x += step) {
+        Vector2 a = {(float)x, .2f};
+        Vector2 b = {(float)x, -.2f};
 
         // Draw X axis ticks
         DrawLineV(a, b, WHITE);
 
         // Draw X axis tick labels
-        if (i == 0) continue;
-        Drawing::DrawToOtherRt(camera, rt, textTexture, [&i, &b] {
-            Vector2 textSize = Drawing::MeasureText(std::to_string(i), labelFontSize);
+        if (x == 0) continue;
+        Drawing::DrawToOtherRt(camera, rt, textTexture, [&x, &b] {
+            Vector2 textSize = Drawing::MeasureText(std::to_string(x), labelFontSize);
             Vector2 pos = VectorSpace2D::WorldVecToScreenSpace(b, camera);
-            Drawing::DrawText(std::to_string(i), pos.x - textSize.x / 2, pos.y, WHITE, labelFontSize);
+            Drawing::DrawText(std::to_string(x), pos.x - textSize.x / 2, pos.y, WHITE, labelFontSize);
         });
     }
 }
@@ -282,7 +311,7 @@ void VectorSpace2D::DrawAVector(DrawVector vector, const std::u16string& name, C
                 stringBuilder.precision(settings.decimalPrecision);
                 stringBuilder << "(" << vector.X() << ", " << vector.Y() << ")";
 
-                Drawing::DrawText(stringBuilder.str(), labelPosition.x + .3f * camera.zoom, labelPosition.y, color, labelFontSize);
+                Drawing::DrawText(stringBuilder.str(), labelPosition.x + labelFontSize*2, labelPosition.y, color, 14);
             }
 
             if (settings.drawCoordinateVectorPos) {
@@ -290,11 +319,8 @@ void VectorSpace2D::DrawAVector(DrawVector vector, const std::u16string& name, C
                 stringBuilder.precision(settings.decimalPrecision);
                 stringBuilder << "(" << transformedPos.x << ", " << transformedPos.y << ")";
 
-                float yOffset = 0;
-                if (settings.drawVectorCoords) {
-                    yOffset += .15;
-                }
-                Drawing::DrawText(stringBuilder.str(), labelPosition.x + .3f * camera.zoom, labelPosition.y + yOffset * camera.zoom, color, labelFontSize);
+                float yOffset = settings.drawVectorCoords ? 14 : 0;
+                Drawing::DrawText(stringBuilder.str(), labelPosition.x + labelFontSize*2, labelPosition.y + yOffset, color, 14);
             }
         });
     }
