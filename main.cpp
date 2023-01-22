@@ -14,7 +14,6 @@ int main()
 
     std::unique_ptr<VectorSpace> currentVs;
 
-
     UIWindow::Draw([&currentVs] {
         ImGuiID dock_id = DockFullScreen();
 

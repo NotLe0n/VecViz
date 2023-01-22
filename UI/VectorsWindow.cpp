@@ -52,31 +52,40 @@ void DrawVectorsWindow(std::unique_ptr<VectorSpace>& currentVs)
 
         if (ImGui::BeginListBox("##VectorList", ImVec2(500, 10 * ImGui::GetTextLineHeightWithSpacing()))) {
             for (int n = 0; n < currentVs->vectors.size(); n++) {
-                ImGui::BeginGroup();
-                {
-                    DrawVector& vector = currentVs->vectors[n];
-                    const std::string indexStr = std::to_string(n);
+                ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(5, 5));
+                ImGui::PushID(n);
 
-                    ImGui::ColorEdit4(("##VectorColorSelect" + indexStr).c_str(), (float*)&vector.color, ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoLabel | ImGuiColorEditFlags_NoAlpha);
+                const std::string indexStr = std::to_string(n);
+                DrawVector& vector = currentVs->vectors[n];
 
-                    ImGui::SameLine();
+                ImGui::SetCursorPos(ImVec2(ImGui::GetCursorPos().x, ImGui::GetCursorPos().y + 3));
 
-                    ImGui::Checkbox(("##SelectedBox" + indexStr).c_str(), (bool*)&selectVectorList[n]);
-                    ImGui::SameLine();
-                    ImGui::Text("v%d:", n);
-                    ImGui::SameLine();
+                ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 10));
+                ImGui::Selectable("", (bool*)&selectVectorList[n], ImGuiSelectableFlags_AllowItemOverlap);
+                ImGui::PopStyleVar();
 
-                    ImGui::SetNextItemWidth(numberInputWidth + 100);
-                    ImGui::InputFloat(("##VectorInputX" + indexStr).c_str(), &vector.vector.x, 1, 0, settings.GetDecimalPrecisionStr().c_str());
-                    ImGui::SetItemAllowOverlap();
+                ImGui::SameLine();
 
-                    ImGui::SameLine();
+                ImGui::SetCursorPos(ImVec2(ImGui::GetCursorPos().x, ImGui::GetCursorPos().y - 3));
 
-                    ImGui::SetNextItemWidth(numberInputWidth + 100);
-                    ImGui::InputFloat(("##VectorInputY" + indexStr).c_str(), &vector.vector.y, 1, 0, settings.GetDecimalPrecisionStr().c_str());
-                    ImGui::SetItemAllowOverlap();
-                }
-                ImGui::EndGroup();
+                ImGui::ColorEdit4(("##VectorColorSelect" + indexStr).c_str(), (float*)&vector.color, ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoLabel | ImGuiColorEditFlags_NoAlpha | ImGuiColorEditFlags_NoBorder);
+
+                ImGui::SameLine();
+
+                ImGui::Text("v%d:", n);
+
+                ImGui::SameLine();
+
+                ImGui::SetNextItemWidth(numberInputWidth + 100);
+                ImGui::InputFloat(("##VectorInputX" + indexStr).c_str(), &vector.vector.x, 1, 0, settings.GetDecimalPrecisionStr().c_str());
+
+                ImGui::SameLine();
+
+                ImGui::SetNextItemWidth(numberInputWidth + 100);
+                ImGui::InputFloat(("##VectorInputY" + indexStr).c_str(), &vector.vector.y, 1, 0, settings.GetDecimalPrecisionStr().c_str());
+
+                ImGui::PopStyleVar();
+                ImGui::PopID();
             }
             ImGui::EndListBox();
         }
