@@ -175,21 +175,21 @@ void VectorSpace2D::DrawOrigGrid()
 
 void VectorSpace2D::DrawTransformedGrid()
 {
-    Vector2 dirX1 = V2Transform({1, 0}, MatrixLerp(transformationMatrix, t));
-    Vector2 dirX2 = V2Transform({-1, 0}, MatrixLerp(transformationMatrix, t));
+    Vector2 dirX1 = Vector2Transform({1, 0}, MatrixLerp(transformationMatrix, t));
+    Vector2 dirX2 = Vector2Transform({-1, 0}, MatrixLerp(transformationMatrix, t));
 
-    Vector2 dirY1 = V2Transform({0, 1}, MatrixLerp(transformationMatrix, t));
-    Vector2 dirY2 = V2Transform({0, -1}, MatrixLerp(transformationMatrix, t));
+    Vector2 dirY1 = Vector2Transform({0, 1}, MatrixLerp(transformationMatrix, t));
+    Vector2 dirY2 = Vector2Transform({0, -1}, MatrixLerp(transformationMatrix, t));
 
     Color col = {96, 125, 139, 255};
     for (int y = GetScreenHeight() - (GetScreenHeight() % step); y > -GetScreenHeight(); y -= step) {
-        Vector2 pos = V2Transform({0, float(y)}, MatrixLerp(transformationMatrix, t));
+        Vector2 pos = Vector2Transform({0, float(y)}, MatrixLerp(transformationMatrix, t));
 
         DrawRay(Ray{V2ToV3(pos), V2ToV3(dirX1)}, col);
         DrawRay(Ray{V2ToV3(pos), V2ToV3(dirX2)}, col);
     }
     for (int x = GetScreenWidth() - (GetScreenWidth() % step); x > -GetScreenWidth(); x -= step) {
-        Vector2 pos = V2Transform({float(x), 0}, MatrixLerp(transformationMatrix, t));
+        Vector2 pos = Vector2Transform({float(x), 0}, MatrixLerp(transformationMatrix, t));
 
         DrawRay(Ray{V2ToV3(pos), V2ToV3(dirY1)}, col);
         DrawRay(Ray{V2ToV3(pos), V2ToV3(dirY2)}, col);
@@ -285,7 +285,7 @@ void VectorSpace2D::DrawVectors()
 void VectorSpace2D::DrawAVector(DrawVector vector, const std::u16string& name, Color color, float t)
 {
     Settings& settings = Settings::GetSettings();
-    Vector2 transformedPos = V2Transform({vector.vector.x, vector.vector.y}, MatrixLerp(transformationMatrix, t));
+    Vector2 transformedPos = Vector2Transform({vector.vector.x, vector.vector.y}, MatrixLerp(transformationMatrix, t));
 
     if (settings.drawVectorPoint) {
         DrawCircleV(transformedPos, 3 / camera.zoom, color);
