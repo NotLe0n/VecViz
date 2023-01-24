@@ -33,8 +33,8 @@ private:
     void DrawVectors();
     void DrawAVector(DrawVector vector, const std::u16string& name, Color color, float t);
 
-    static Vector2 VecToWorldSpace(Vector2 pos, Camera2D cam);
-    static Vector2 WorldVecToScreenSpace(Vector2 pos, Camera2D cam);
+    Vector3 VecToWorldSpace(Vector3 pos) override;
+    Vector3 WorldVecToScreenSpace(Vector3 pos) override;
 };
 
 

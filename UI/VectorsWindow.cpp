@@ -31,19 +31,19 @@ void DrawVectorsWindow(std::unique_ptr<VectorSpace>& currentVs)
         // Add Button
         if (ImGui::Button("Add Vector")) {
             currentVs->vectors.emplace_back(addVectorVals[0], addVectorVals[1]);
-            selectVectorList.push_back(false);
+            //selectVectorList.push_back(false);
         }
 
         ImGui::SameLine();
 
         // Delete Button
-        bool noneSelected = std::all_of(selectVectorList.begin(), selectVectorList.end(), [](auto v) {return !v;});
+        bool noneSelected = std::all_of(currentVs->vectors.begin(), currentVs->vectors.end(), [](DrawVector v) {return !v.selected;});
         ImGui::BeginDisabled(noneSelected);
         if (ImGui::Button(" - ")) {
             for (int n = 0; n < currentVs->vectors.size(); n++) {
-                if (selectVectorList[n]) {
+                if (currentVs->vectors[n].selected) {
                     currentVs->vectors.erase(currentVs->vectors.begin() + n);
-                    selectVectorList.erase(selectVectorList.begin() + n);
+                    //selectVectorList.erase(selectVectorList.begin() + n);
                     n--;
                 }
             }
@@ -61,7 +61,7 @@ void DrawVectorsWindow(std::unique_ptr<VectorSpace>& currentVs)
                 ImGui::SetCursorPos(ImVec2(ImGui::GetCursorPos().x, ImGui::GetCursorPos().y + 3));
 
                 ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 10));
-                ImGui::Selectable("", (bool*)&selectVectorList[n], ImGuiSelectableFlags_AllowItemOverlap);
+                ImGui::Selectable("", &vector.selected/*(bool*)&selectVectorList[n]*/, ImGuiSelectableFlags_AllowItemOverlap);
                 ImGui::PopStyleVar();
 
                 ImGui::SameLine();

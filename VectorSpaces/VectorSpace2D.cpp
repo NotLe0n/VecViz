@@ -75,8 +75,10 @@ void VectorSpace2D::Update()
         step = 1;
     }
 
-    worldStart = VecToWorldSpace({0, 0}, camera);
-    worldEnd = VecToWorldSpace({(float)GetScreenWidth(), (float)GetScreenHeight()}, camera);
+    Vector3 worldStartV3 = VecToWorldSpace({0, 0, 0});
+    Vector3 worldEndV3 = VecToWorldSpace({(float)GetScreenWidth(), (float)GetScreenHeight(), 0});
+    worldStart = {worldStartV3.x, worldStartV3.y};
+    worldEnd = {worldEndV3.x, worldEndV3.y};
 }
 
 void DrawDebugInfo();
@@ -103,9 +105,9 @@ void VectorSpace2D::Draw()
                 DrawXAxis();
 
                 // Origin label
-                Drawing::DrawToOtherRt(camera, rt, textTexture, []{
+                Drawing::DrawToOtherRt(camera, rt, textTexture, [this]{
                     Vector2 textSize = Drawing::MeasureText("0", labelFontSize);
-                    Vector2 pos = VectorSpace2D::WorldVecToScreenSpace({0, 0}, camera);
+                    Vector3 pos = WorldVecToScreenSpace({0, 0, 0});
                     Drawing::DrawText("0", pos.x - textSize.x - 5, pos.y + 5, WHITE, labelFontSize);
                 });
             }
@@ -219,9 +221,9 @@ void VectorSpace2D::DrawYAxisTicks()
 
         // Draw Y axis tick labels
         if (y == 0) continue;
-        Drawing::DrawToOtherRt(camera, rt, textTexture, [&y, &b] {
+        Drawing::DrawToOtherRt(camera, rt, textTexture, [&y, &b, this] {
             Vector2 textSize = Drawing::MeasureText(std::to_string(y), labelFontSize);
-            Vector2 pos = VectorSpace2D::WorldVecToScreenSpace(b, camera);
+            Vector3 pos = WorldVecToScreenSpace(V2ToV3(b));
             Drawing::DrawText(std::to_string(y), pos.x - textSize.x - 5, pos.y - textSize.y / 2, WHITE, labelFontSize);
         });
     }
@@ -250,22 +252,22 @@ void VectorSpace2D::DrawXAxisTicks()
 
         // Draw X axis tick labels
         if (x == 0) continue;
-        Drawing::DrawToOtherRt(camera, rt, textTexture, [&x, &b] {
+        Drawing::DrawToOtherRt(camera, rt, textTexture, [&x, &b, this] {
             Vector2 textSize = Drawing::MeasureText(std::to_string(x), labelFontSize);
-            Vector2 pos = VectorSpace2D::WorldVecToScreenSpace(b, camera);
+            Vector3 pos = WorldVecToScreenSpace(V2ToV3(b));
             Drawing::DrawText(std::to_string(x), pos.x - textSize.x / 2, pos.y, WHITE, labelFontSize);
         });
     }
 }
 
-Vector2 VectorSpace2D::VecToWorldSpace(Vector2 pos, Camera2D cam)
+Vector3 VectorSpace2D::VecToWorldSpace(Vector3 pos)
 {
-    return GetScreenToWorld2D({pos.x, GetMonitorHeight(GetCurrentMonitor()) - pos.y}, cam);
+    return V2ToV3(GetScreenToWorld2D({pos.x, GetMonitorHeight(GetCurrentMonitor()) - pos.y}, camera));
 }
 
-Vector2 VectorSpace2D::WorldVecToScreenSpace(Vector2 pos, Camera2D cam)
+Vector3 VectorSpace2D::WorldVecToScreenSpace(Vector3 pos)
 {
-    Vector2 trans = GetWorldToScreen2D(pos, cam);
+    Vector2 trans = GetWorldToScreen2D({pos.x, pos.y}, camera);
     return {trans.x, GetMonitorHeight(GetCurrentMonitor()) - trans.y};
 }
 
@@ -296,8 +298,8 @@ void VectorSpace2D::DrawAVector(DrawVector vector, const std::u16string& name, C
     }
 
     if (settings.drawVectorLabel) {
-        Drawing::DrawToOtherRt(camera, rt, textTexture, [&name, &vector, &transformedPos, &color, &settings] {
-            Vector2 screenPos = VectorSpace2D::WorldVecToScreenSpace(transformedPos, camera);
+        Drawing::DrawToOtherRt(camera, rt, textTexture, [&name, &vector, &transformedPos, &color, &settings, this] {
+            Vector3 screenPos = WorldVecToScreenSpace(V2ToV3(transformedPos));
             Vector2 labelPosition = {screenPos.x + 10.0f / camera.zoom, screenPos.y - 20.0f / camera.zoom};
 
             if (settings.drawVectorName) {

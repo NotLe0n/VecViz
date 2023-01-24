@@ -13,6 +13,7 @@ public:
     Vector3 vector;
     Vector3 origin;
     ImVec4 color;
+    bool selected;
 
 public:
     explicit DrawVector(float x = 0, float y = 0, float z = 0);

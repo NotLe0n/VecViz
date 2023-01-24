@@ -4,7 +4,7 @@
 
 int DrawVector::vectorCount = 0;
 
-DrawVector::DrawVector(float x, float y, float z) : vector({x, y, z}), origin(Vector3Zero())
+DrawVector::DrawVector(float x, float y, float z) : vector({x, y, z}), origin(Vector3Zero()), selected(false)
 {
     vectorIndex = vectorCount;
     vectorCount++;

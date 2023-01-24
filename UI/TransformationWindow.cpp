@@ -3,7 +3,9 @@
 #include "SubWindows.h"
 #include "../Settings.h"
 
-float transformMatrixVals[9] = {1, 0, 0, 0, 1, 0, 0, 0, 1,};
+float transformMatrixVals[9] = {1, 0, 0,
+                                0, 1, 0,
+                                0, 0, 1};
 bool sinusMode;
 bool autoApplyTransformation;
 
@@ -29,6 +31,30 @@ void DrawTransformationWindow(std::unique_ptr<VectorSpace>& currentVs)
 
         if (sinusMode) {
             currentVs->t = (sinf(GetTime()) + 1) / 2;
+        }
+
+        if (currentVs->GetBasisX().X() != transformMatrixVals[0]
+        || currentVs->GetBasisX().Y() != transformMatrixVals[3]
+        || currentVs->GetBasisX().Z() != transformMatrixVals[7]) {
+            transformMatrixVals[0] = currentVs->GetBasisX().X();
+            transformMatrixVals[3] = currentVs->GetBasisX().Y();
+            transformMatrixVals[6] = currentVs->GetBasisX().Z();
+        }
+
+        if (currentVs->GetBasisY().X() != transformMatrixVals[0]
+            || currentVs->GetBasisY().Y() != transformMatrixVals[3]
+            || currentVs->GetBasisY().Z() != transformMatrixVals[7]) {
+            transformMatrixVals[1] = currentVs->GetBasisY().X();
+            transformMatrixVals[4] = currentVs->GetBasisY().Y();
+            transformMatrixVals[7] = currentVs->GetBasisY().Z();
+        }
+
+        if (currentVs->GetBasisY().X() != transformMatrixVals[0]
+            || currentVs->GetBasisY().Y() != transformMatrixVals[3]
+            || currentVs->GetBasisY().Z() != transformMatrixVals[7]) {
+            transformMatrixVals[2] = currentVs->GetBasisZ().X();
+            transformMatrixVals[5] = currentVs->GetBasisZ().Y();
+            transformMatrixVals[8] = currentVs->GetBasisZ().Z();
         }
 
         ImGui::Text("Transformation matrix:");

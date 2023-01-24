@@ -26,6 +26,13 @@ protected:
     Matrix transformationMatrix = MatrixIdentity();
 
 public:
+    RenderTexture* GetRenderTexture();
+    DrawVector GetBasisX();
+    DrawVector GetBasisY();
+    DrawVector GetBasisZ();
+    Matrix GetTransformationMatrix();
+
+public:
     virtual int GetDimension() = 0;
 
     virtual void Draw() = 0;
@@ -33,7 +40,8 @@ public:
 
     virtual void ApplyTransformation(Matrix transformationMatrix) = 0;
 
-    RenderTexture* GetRenderTexture();
+    virtual Vector3 VecToWorldSpace(Vector3 pos) = 0;
+    virtual Vector3 WorldVecToScreenSpace(Vector3 pos) = 0;
 };
 
 #endif //VECVIZ_VECTORSPACE_H
