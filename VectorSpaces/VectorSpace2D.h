@@ -6,7 +6,12 @@
 
 class VectorSpace2D : public VectorSpace {
 private:
+    Camera2D camera{};
     RenderTexture textTexture = LoadRenderTexture(rt.texture.width, rt.texture.height);
+    const float labelFontSize = 18;
+    Vector2 worldStart{};
+    Vector2 worldEnd{};
+    int step = 1;
 
 public:
     VectorSpace2D();

@@ -21,7 +21,12 @@ DrawVector VectorSpace::GetBasisZ()
 {
     return BasisZ;
 }
+
 Matrix VectorSpace::GetTransformationMatrix()
 {
-    return transformationMatrix;
+    return Matrix{
+        transformationMatrix[0], transformationMatrix[3], transformationMatrix[6], 0,
+        transformationMatrix[1], transformationMatrix[4], transformationMatrix[7], 0,
+        transformationMatrix[2], transformationMatrix[5], transformationMatrix[8], 0,
+        0, 0, 0, 1};
 }

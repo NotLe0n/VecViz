@@ -7,8 +7,6 @@
 #include "../Settings.h"
 #include "../FontManager.h"
 
-Camera2D camera;
-
 VectorSpace2D::VectorSpace2D()
 {
     camera = Camera2D();
@@ -26,11 +24,6 @@ int VectorSpace2D::GetDimension()
 {
     return 2;
 }
-
-Vector2 worldStart;
-Vector2 worldEnd;
-const float labelFontSize = 18;
-int step = 1;
 
 void VectorSpace2D::Update()
 {
@@ -80,8 +73,6 @@ void VectorSpace2D::Update()
     worldEnd = {worldEndV3.x, worldEndV3.y};
 }
 
-void DrawDebugInfo();
-
 void VectorSpace2D::Draw()
 {
     BeginTextureMode(rt);
@@ -121,30 +112,20 @@ void VectorSpace2D::Draw()
 
     BeginTextureMode(textTexture);
     ClearBackground({0, 0, 0, 0});
-    DrawDebugInfo();
     EndTextureMode();
 }
 
 void VectorSpace2D::ApplyTransformation(Matrix transformationMatrix)
 {
-    this->transformationMatrix = transformationMatrix;
+    auto mf = MatrixToFloatV(transformationMatrix);
+    for (int i = 0; i < 3; ++i) {
+        this->transformationMatrix[i] = mf.v[i];
+        this->transformationMatrix[i] = mf.v[i+4];
+        this->transformationMatrix[i] = mf.v[i+8];
+    }
 
     BasisX.vector = {transformationMatrix.m0, transformationMatrix.m1, 0};
     BasisY.vector = {transformationMatrix.m4, transformationMatrix.m5, 0};
-}
-
-void DrawDebugInfo() {
-    std::stringstream stringBuilder;
-    stringBuilder.precision(3);
-    stringBuilder <<
-    "Monitor dim: [" << GetMonitorWidth(GetCurrentMonitor()) << ", " << GetMonitorHeight(GetCurrentMonitor()) << "]\n" <<
-    "Monitor pysical dim: [" << GetMonitorPhysicalWidth(GetCurrentMonitor()) << ", " << GetMonitorPhysicalHeight(GetCurrentMonitor()) << "]\n" <<
-    "Screen dim: [" << GetScreenWidth() << ", " << GetScreenHeight() << "]\n" <<
-    "Render dim: [" << GetRenderWidth() << ", " << GetRenderHeight() << "]\n" <<
-    "Window scale DPI: [" << GetWindowScaleDPI().x << ", " << GetWindowScaleDPI().y << "]\n" <<
-    "Camera zoom: " << camera.zoom;
-
-    Drawing::DrawText(stringBuilder.str(), VectorSpace::drawOffset.x, 0, YELLOW, 20);
 }
 
 void VectorSpace2D::DrawOrigGrid()
@@ -177,21 +158,21 @@ void VectorSpace2D::DrawOrigGrid()
 
 void VectorSpace2D::DrawTransformedGrid()
 {
-    Vector2 dirX1 = Vector2Transform({1, 0}, MatrixLerp(transformationMatrix, t));
-    Vector2 dirX2 = Vector2Transform({-1, 0}, MatrixLerp(transformationMatrix, t));
+    Vector2 dirX1 = Vector2Transform({1, 0}, MatrixLerp(GetTransformationMatrix(), t));
+    Vector2 dirX2 = Vector2Transform({-1, 0}, MatrixLerp(GetTransformationMatrix(), t));
 
-    Vector2 dirY1 = Vector2Transform({0, 1}, MatrixLerp(transformationMatrix, t));
-    Vector2 dirY2 = Vector2Transform({0, -1}, MatrixLerp(transformationMatrix, t));
+    Vector2 dirY1 = Vector2Transform({0, 1}, MatrixLerp(GetTransformationMatrix(), t));
+    Vector2 dirY2 = Vector2Transform({0, -1}, MatrixLerp(GetTransformationMatrix(), t));
 
     Color col = {96, 125, 139, 255};
     for (int y = GetScreenHeight() - (GetScreenHeight() % step); y > -GetScreenHeight(); y -= step) {
-        Vector2 pos = Vector2Transform({0, float(y)}, MatrixLerp(transformationMatrix, t));
+        Vector2 pos = Vector2Transform({0, float(y)}, MatrixLerp(GetTransformationMatrix(), t));
 
         DrawRay(Ray{V2ToV3(pos), V2ToV3(dirX1)}, col);
         DrawRay(Ray{V2ToV3(pos), V2ToV3(dirX2)}, col);
     }
     for (int x = GetScreenWidth() - (GetScreenWidth() % step); x > -GetScreenWidth(); x -= step) {
-        Vector2 pos = Vector2Transform({float(x), 0}, MatrixLerp(transformationMatrix, t));
+        Vector2 pos = Vector2Transform({float(x), 0}, MatrixLerp(GetTransformationMatrix(), t));
 
         DrawRay(Ray{V2ToV3(pos), V2ToV3(dirY1)}, col);
         DrawRay(Ray{V2ToV3(pos), V2ToV3(dirY2)}, col);
@@ -287,7 +268,7 @@ void VectorSpace2D::DrawVectors()
 void VectorSpace2D::DrawAVector(DrawVector vector, const std::u16string& name, Color color, float t)
 {
     Settings& settings = Settings::GetSettings();
-    Vector2 transformedPos = Vector2Transform({vector.vector.x, vector.vector.y}, MatrixLerp(transformationMatrix, t));
+    Vector2 transformedPos = Vector2Transform({vector.vector.x, vector.vector.y}, MatrixLerp(GetTransformationMatrix(), t));
 
     if (settings.drawVectorPoint) {
         DrawCircleV(transformedPos, 3 / camera.zoom, color);

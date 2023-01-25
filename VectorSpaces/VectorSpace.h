@@ -18,12 +18,14 @@ protected:
 public:
     float t = 0; // Transformation percentage
     std::vector<DrawVector> vectors{}; // list of vectors
+    float transformationMatrix[9] = {1, 0, 0,
+                                     0, 1, 0,
+                                     0, 0, 1};
 
 protected:
     DrawVector BasisX{1}; // Basis vector for the X direction
     DrawVector BasisY{0, 1}; // Basis vector for the Y direction
     DrawVector BasisZ{0, 0, 1}; // Basis vector for the Z direction
-    Matrix transformationMatrix = MatrixIdentity();
 
 public:
     RenderTexture* GetRenderTexture();

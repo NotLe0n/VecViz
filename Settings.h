@@ -29,6 +29,9 @@ public:
     bool showTransformationsWindow = true;
     bool showOptionsWindow = false;
 
+    // transfomation window settings
+    bool sinusMode = false;
+
 private:
     friend class Singleton<Settings>;
 

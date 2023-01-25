@@ -5,14 +5,9 @@
 #include <algorithm>
 
 float addVectorVals[] = {0, 0};
-std::vector<char> selectVectorList = {}; // replacement for vector<bool>
 
-void DrawVectorsWindow(std::unique_ptr<VectorSpace>& currentVs)
+void DrawVectorsWindow(int currentVs, std::vector<std::shared_ptr<VectorSpace>> vectorSpaces)
 {
-    if (!currentVs) {
-        return;
-    }
-
     Settings& settings = Settings::GetSettings();
 
     if (!settings.showVectorsWindow) {
@@ -30,19 +25,19 @@ void DrawVectorsWindow(std::unique_ptr<VectorSpace>& currentVs)
 
         // Add Button
         if (ImGui::Button("Add Vector")) {
-            currentVs->vectors.emplace_back(addVectorVals[0], addVectorVals[1]);
+            vectorSpaces[currentVs]->vectors.emplace_back(addVectorVals[0], addVectorVals[1]);
             //selectVectorList.push_back(false);
         }
 
         ImGui::SameLine();
 
         // Delete Button
-        bool noneSelected = std::all_of(currentVs->vectors.begin(), currentVs->vectors.end(), [](DrawVector v) {return !v.selected;});
+        bool noneSelected = std::all_of(vectorSpaces[currentVs]->vectors.begin(), vectorSpaces[currentVs]->vectors.end(), [](DrawVector v) {return !v.selected;});
         ImGui::BeginDisabled(noneSelected);
         if (ImGui::Button(" - ")) {
-            for (int n = 0; n < currentVs->vectors.size(); n++) {
-                if (currentVs->vectors[n].selected) {
-                    currentVs->vectors.erase(currentVs->vectors.begin() + n);
+            for (int n = 0; n < vectorSpaces[currentVs]->vectors.size(); n++) {
+                if (vectorSpaces[currentVs]->vectors[n].selected) {
+                    vectorSpaces[currentVs]->vectors.erase(vectorSpaces[currentVs]->vectors.begin() + n);
                     //selectVectorList.erase(selectVectorList.begin() + n);
                     n--;
                 }
@@ -51,12 +46,12 @@ void DrawVectorsWindow(std::unique_ptr<VectorSpace>& currentVs)
         ImGui::EndDisabled();
 
         if (ImGui::BeginListBox("##VectorList", ImVec2(500, 10 * ImGui::GetTextLineHeightWithSpacing()))) {
-            for (int n = 0; n < currentVs->vectors.size(); n++) {
+            for (int n = 0; n < vectorSpaces[currentVs]->vectors.size(); n++) {
                 ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(5, 5));
                 ImGui::PushID(n);
 
                 const std::string indexStr = std::to_string(n);
-                DrawVector& vector = currentVs->vectors[n];
+                DrawVector& vector = vectorSpaces[currentVs]->vectors[n];
 
                 ImGui::SetCursorPos(ImVec2(ImGui::GetCursorPos().x, ImGui::GetCursorPos().y + 3));
 
@@ -89,6 +84,6 @@ void DrawVectorsWindow(std::unique_ptr<VectorSpace>& currentVs)
             }
             ImGui::EndListBox();
         }
-        ImGui::End();
     }
+    ImGui::End();
 }

@@ -12,26 +12,30 @@ int main()
         return -1;
     }
 
-    std::unique_ptr<VectorSpace> currentVs;
+    std::vector<std::shared_ptr<VectorSpace>> vectorSpaces = {};
+    int currentVs = -1;
+    //std::unique_ptr<VectorSpace> currentVs;
 
-    UIWindow::Draw([&currentVs] {
+    UIWindow::Draw([&currentVs, &vectorSpaces] {
         ImGuiID dock_id = DockFullScreen();
 
-        DrawVectorsWindow(currentVs);
-        DrawTransformationWindow(currentVs);
-        DrawVectorSpaceWindow(currentVs);
-        DrawOptionsWindow();
+        DrawVectorSpaceWindow(currentVs, vectorSpaces);
+        if (!vectorSpaces.empty()) {
+            DrawVectorsWindow(currentVs, vectorSpaces);
+            DrawTransformationWindow(currentVs, vectorSpaces);
+            DrawOptionsWindow();
+        }
 
         static bool first_time = true;
         if (first_time) {
             first_time = false;
-            ImGui::DockBuilderDockWindow("Vectorspace view", dock_id);
+            ImGui::DockBuilderDockWindow("Vector space view", dock_id);
             ImGui::DockBuilderFinish(dock_id);
         }
 
         ImGui::ShowDemoWindow();
 
-        if (!DrawMenuBar(currentVs)) {
+        if (!DrawMenuBar(currentVs, vectorSpaces)) {
             return false;
         }
 
@@ -40,7 +44,7 @@ int main()
         return true;
     });
 
-    currentVs.reset();
+    vectorSpaces.clear();
     UIWindow::CloseCurrentWindow();
     return 0;
 }

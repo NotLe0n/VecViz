@@ -3,75 +3,85 @@
 #include "rlImGui.h"
 #include "../utils.h"
 
-void DrawVectorSpaceWindow(std::unique_ptr<VectorSpace>& currentVs)
+void DrawVectorSpaceWindow(int& currentVs, std::vector<std::shared_ptr<VectorSpace>> vectorSpaces)
 {
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
     ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
-    if (ImGui::Begin("Vectorspace view"), 0, ImGuiWindowFlags_NoDocking) {
-        if (!currentVs) {
+    if (ImGui::Begin("Vector space view", nullptr, ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollWithMouse)) {
+        if (vectorSpaces.empty()) {
             TextCentered("Create a new vector space under 'File -> New Vector Space...'");
             ImGui::End();
             ImGui::PopStyleVar(2);
             return;
         }
 
-        Texture* renderTexture = &currentVs->GetRenderTexture()->texture;
-        VectorSpace::drawOffset = {ImGui::GetWindowPos().x, ImGui::GetWindowPos().y};
+        ImGui::BeginTabBar("Vector space tabs");
+        for (int i = 0; i < vectorSpaces.size(); ++i) {
+            std::string vsName = "Vectorspace " + std::to_string(vectorSpaces[i]->GetDimension()) + "D #" + std::to_string(i + 1);
 
-        float rtw = ImGui::GetWindowWidth();
-        float rth = ImGui::GetWindowHeight() - ImGui::GetFrameHeight();
-        rlImGuiImageRect(renderTexture, rtw, rth, {0, 0, rtw, rth});
+            if (ImGui::BeginTabItem(vsName.c_str())) {
+                currentVs = i;
+                Texture* renderTexture = &vectorSpaces[currentVs]->GetRenderTexture()->texture;
+                VectorSpace::drawOffset = {ImGui::GetWindowPos().x, ImGui::GetWindowPos().y};
 
-        if (ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
-            ImGui::OpenPopup("rightClickPopup");
-        }
+                float rtw = ImGui::GetWindowWidth();
+                float rth = ImGui::GetWindowHeight() - ImGui::GetFrameHeight();
+                rlImGuiImageRect(renderTexture, rtw, rth, {0, 0, rtw, rth});
 
-        if (ImGui::BeginPopup("rightClickPopup")) {
-            ImVec2 pos = ImGui::GetMousePosOnOpeningCurrentPopup();
-            Vector3 newVec = currentVs->VecToWorldSpace({pos.x - currentVs->drawOffset.x, pos.y - currentVs->drawOffset.y - ImGui::GetFrameHeight()});
-
-            if (ImGui::Button("Add vector here")) {
-                currentVs->vectors.emplace_back(newVec.x, newVec.y, newVec.z);
-                ImGui::CloseCurrentPopup();
-            }
-
-            if (ImGui::Button("Transform X basis Vector here")) {
-                currentVs->ApplyTransformation({
-                    newVec.x, currentVs->GetBasisY().X(), currentVs->GetBasisZ().X(), 0,
-                    newVec.y, currentVs->GetBasisY().Y(), currentVs->GetBasisZ().Y(), 0,
-                    newVec.z, currentVs->GetBasisY().Z(), currentVs->GetBasisZ().Z(), 0,
-                    0, 0, 0, 1
-                });
-            }
-            if (currentVs->GetDimension() > 1) {
-                if (ImGui::Button("Transform Y basis Vector here")) {
-                    currentVs->ApplyTransformation({
-                           currentVs->GetBasisX().X(), newVec.x, currentVs->GetBasisZ().X(), 0,
-                           currentVs->GetBasisX().Y(), newVec.y, currentVs->GetBasisZ().Y(), 0,
-                           currentVs->GetBasisX().Z(), newVec.z, currentVs->GetBasisZ().Z(), 0,
-                           0, 0, 0, 1
-                   });
+                if (ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
+                    ImGui::OpenPopup("rightClickPopup");
                 }
-            }
-            if (currentVs->GetDimension() > 2) {
-                if (ImGui::Button("Transform Z basis Vector here")) {
-                    currentVs->ApplyTransformation({
-                           currentVs->GetBasisX().X(), currentVs->GetBasisY().X(), newVec.x, 0,
-                           currentVs->GetBasisX().Y(), currentVs->GetBasisY().Y(), newVec.y, 0,
-                           currentVs->GetBasisX().Z(), currentVs->GetBasisY().Z(), newVec.z, 0,
-                           0, 0, 0, 1
-                   });
+
+                if (ImGui::BeginPopup("rightClickPopup")) {
+                    ImVec2 pos = ImGui::GetMousePosOnOpeningCurrentPopup();
+                    Vector3 newVec = vectorSpaces[currentVs]->VecToWorldSpace({pos.x - vectorSpaces[currentVs]->drawOffset.x, pos.y - vectorSpaces[currentVs]->drawOffset.y - ImGui::GetFrameHeight()});
+
+                    if (ImGui::Button("Add vector here")) {
+                        vectorSpaces[currentVs]->vectors.emplace_back(newVec.x, newVec.y, newVec.z);
+                        ImGui::CloseCurrentPopup();
+                    }
+
+                    if (ImGui::Button("Transform X basis Vector here")) {
+                        vectorSpaces[currentVs]->ApplyTransformation({
+                            newVec.x, vectorSpaces[currentVs]->GetBasisY().X(), vectorSpaces[currentVs]->GetBasisZ().X(), 0,
+                            newVec.y, vectorSpaces[currentVs]->GetBasisY().Y(), vectorSpaces[currentVs]->GetBasisZ().Y(), 0,
+                            newVec.z, vectorSpaces[currentVs]->GetBasisY().Z(), vectorSpaces[currentVs]->GetBasisZ().Z(), 0,
+                            0, 0, 0, 1
+                        });
+                    }
+                    if (vectorSpaces[currentVs]->GetDimension() > 1) {
+                        if (ImGui::Button("Transform Y basis Vector here")) {
+                            vectorSpaces[currentVs]->ApplyTransformation({
+                                   vectorSpaces[currentVs]->GetBasisX().X(), newVec.x, vectorSpaces[currentVs]->GetBasisZ().X(), 0,
+                                   vectorSpaces[currentVs]->GetBasisX().Y(), newVec.y, vectorSpaces[currentVs]->GetBasisZ().Y(), 0,
+                                   vectorSpaces[currentVs]->GetBasisX().Z(), newVec.z, vectorSpaces[currentVs]->GetBasisZ().Z(), 0,
+                                   0, 0, 0, 1
+                           });
+                        }
+                    }
+                    if (vectorSpaces[currentVs]->GetDimension() > 2) {
+                        if (ImGui::Button("Transform Z basis Vector here")) {
+                            vectorSpaces[currentVs]->ApplyTransformation({
+                                   vectorSpaces[currentVs]->GetBasisX().X(), vectorSpaces[currentVs]->GetBasisY().X(), newVec.x, 0,
+                                   vectorSpaces[currentVs]->GetBasisX().Y(), vectorSpaces[currentVs]->GetBasisY().Y(), newVec.y, 0,
+                                   vectorSpaces[currentVs]->GetBasisX().Z(), vectorSpaces[currentVs]->GetBasisY().Z(), newVec.z, 0,
+                                   0, 0, 0, 1
+                           });
+                        }
+                    }
+                    ImGui::EndPopup();
                 }
+
+                if (ImGui::IsWindowHovered()) {
+                    vectorSpaces[currentVs]->Update();
+                }
+                vectorSpaces[currentVs]->Draw();
+
+                ImGui::EndTabItem();
             }
-            ImGui::EndPopup();
         }
-
-        if (ImGui::IsWindowHovered()) {
-            currentVs->Update();
-        }
-        currentVs->Draw();
-
-        ImGui::End();
+        ImGui::EndTabBar();
     }
+    ImGui::End();
     ImGui::PopStyleVar(2);
 }

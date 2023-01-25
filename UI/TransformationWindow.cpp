@@ -3,19 +3,10 @@
 #include "SubWindows.h"
 #include "../Settings.h"
 
-float transformMatrixVals[9] = {1, 0, 0,
-                                0, 1, 0,
-                                0, 0, 1};
-bool sinusMode;
-bool autoApplyTransformation;
 bool updatedValues;
 
-void DrawTransformationWindow(std::unique_ptr<VectorSpace>& currentVs)
+void DrawTransformationWindow(int currentVs, std::vector<std::shared_ptr<VectorSpace>> vectorSpaces)
 {
-    if (!currentVs) {
-        return;
-    }
-
     Settings& settings = Settings::GetSettings();
 
     if (!settings.showTransformationsWindow) {
@@ -26,66 +17,46 @@ void DrawTransformationWindow(std::unique_ptr<VectorSpace>& currentVs)
     {
         ImGui::Text("Transformation percentage:");
         ImGui::SetNextItemWidth(160);
-        ImGui::SliderFloat("##tValue", &currentVs->t, 0, 1, settings.GetDecimalPrecisionStr().c_str());
+        ImGui::SliderFloat("##tValue", &vectorSpaces[currentVs]->t, 0, 1, settings.GetDecimalPrecisionStr().c_str());
         ImGui::SameLine();
-        ImGui::Checkbox("Sinus mode", &sinusMode);
+        ImGui::Checkbox("Sinus mode", &settings.sinusMode);
 
-        if (sinusMode) {
-            currentVs->t = (sinf(GetTime()) + 1) / 2;
+        if (settings.sinusMode) {
+            vectorSpaces[currentVs]->t = (sinf(GetTime()) + 1) / 2;
         }
 
         ImGui::Text("Transformation matrix:");
-        for (int i = 0; i < currentVs->GetDimension(); ++i) {
+        for (int i = 0; i < vectorSpaces[currentVs]->GetDimension(); ++i) {
             std::string name1 = std::string("##transformMatrix:") + std::to_string(i);
             ImGui::SetNextItemWidth(80);
-            if (ImGui::InputFloat(name1.c_str(), &transformMatrixVals[i], 0, 0, settings.GetDecimalPrecisionStr().c_str())) {
+            if (ImGui::InputFloat(name1.c_str(), &vectorSpaces[currentVs]->transformationMatrix[i], 0, 0, settings.GetDecimalPrecisionStr().c_str())) {
                 updatedValues = true;
             }
 
-            for (int j = 1; j < currentVs->GetDimension(); ++j) {
+            for (int j = 1; j < vectorSpaces[currentVs]->GetDimension(); ++j) {
                 std::string name2 = std::string("##transformMatrix:") + std::to_string(i + j * 3);
                 ImGui::SameLine();
                 ImGui::SetNextItemWidth(80);
-                if (ImGui::InputFloat(name2.c_str(), &transformMatrixVals[i + j * 3], 0, 0, settings.GetDecimalPrecisionStr().c_str())) {
+                if (ImGui::InputFloat(name2.c_str(), &vectorSpaces[currentVs]->transformationMatrix[i + j * 3], 0, 0, settings.GetDecimalPrecisionStr().c_str())) {
                     updatedValues = true;
                 }
             }
         }
 
         if (!updatedValues) {
-            transformMatrixVals[0] = currentVs->GetBasisX().X();
-            transformMatrixVals[1] = currentVs->GetBasisY().X();
-            transformMatrixVals[2] = currentVs->GetBasisZ().X();
+            vectorSpaces[currentVs]->transformationMatrix[0] = vectorSpaces[currentVs]->GetBasisX().X();
+            vectorSpaces[currentVs]->transformationMatrix[3] = vectorSpaces[currentVs]->GetBasisY().X();
+            vectorSpaces[currentVs]->transformationMatrix[6] = vectorSpaces[currentVs]->GetBasisZ().X();
 
-            transformMatrixVals[3] = currentVs->GetBasisX().Y();
-            transformMatrixVals[4] = currentVs->GetBasisY().Y();
-            transformMatrixVals[5] = currentVs->GetBasisZ().Y();
+            vectorSpaces[currentVs]->transformationMatrix[1] = vectorSpaces[currentVs]->GetBasisX().Y();
+            vectorSpaces[currentVs]->transformationMatrix[4] = vectorSpaces[currentVs]->GetBasisY().Y();
+            vectorSpaces[currentVs]->transformationMatrix[7] = vectorSpaces[currentVs]->GetBasisZ().Y();
 
-            transformMatrixVals[6] = currentVs->GetBasisX().Z();
-            transformMatrixVals[7] = currentVs->GetBasisY().Z();
-            transformMatrixVals[8] = currentVs->GetBasisZ().Z();
+            vectorSpaces[currentVs]->transformationMatrix[2] = vectorSpaces[currentVs]->GetBasisX().Z();
+            vectorSpaces[currentVs]->transformationMatrix[5] = vectorSpaces[currentVs]->GetBasisY().Z();
+            vectorSpaces[currentVs]->transformationMatrix[8] = vectorSpaces[currentVs]->GetBasisZ().Z();
 
             updatedValues = false;
-        }
-
-        if (ImGui::Button("Apply Transformation")) {
-            currentVs->ApplyTransformation({
-                   transformMatrixVals[0], transformMatrixVals[3], transformMatrixVals[6], 0,
-                   transformMatrixVals[1], transformMatrixVals[4], transformMatrixVals[7], 0,
-                   transformMatrixVals[2], transformMatrixVals[5], transformMatrixVals[8], 0,
-                   0, 0, 0, 1
-            });
-        }
-
-        ImGui::SameLine();
-        ImGui::Checkbox("Auto apply", &autoApplyTransformation);
-        if (autoApplyTransformation) {
-            currentVs->ApplyTransformation({
-                   transformMatrixVals[0], transformMatrixVals[3], transformMatrixVals[6], 0,
-                   transformMatrixVals[1], transformMatrixVals[4], transformMatrixVals[7], 0,
-                   transformMatrixVals[2], transformMatrixVals[5], transformMatrixVals[8], 0,
-                   0, 0, 0, 1
-           });
         }
 
         ImGui::BeginDisabled(!settings.drawGrid);
@@ -97,6 +68,6 @@ void DrawTransformationWindow(std::unique_ptr<VectorSpace>& currentVs)
         ImGui::BeginDisabled(!(settings.drawVectorArrow || settings.drawVectorPoint || settings.drawVectorName || (settings.drawVectorLabel && (settings.drawVectorCoords || settings.drawCoordinateVectorPos))));
         ImGui::Checkbox("Draw basis vectors", &settings.drawBasisVectors);
         ImGui::EndDisabled();
-        ImGui::End();
     }
+    ImGui::End();
 }
