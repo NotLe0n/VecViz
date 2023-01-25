@@ -26,6 +26,7 @@ void DrawOptionsWindow() {
                 ImGui::Checkbox("Draw untransformed grid", &settings.drawOrigGrid);
                 ImGui::Checkbox("Draw transformed grid", &settings.drawTransformedGrid);
                 ImGui::Checkbox("Draw grid", &settings.drawGrid);
+                ImGui::Checkbox("Draw minor grid lines", &settings.drawMinorGridLines);
                 ImGui::Checkbox("Draw axis", &settings.drawAxis);
                 ImGui::Checkbox("Draw vector arrows", &settings.drawVectorArrow);
                 ImGui::Checkbox("Draw vector point", &settings.drawVectorPoint);

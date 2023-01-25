@@ -14,6 +14,7 @@ public:
     bool drawOrigGrid = true;
     bool drawTransformedGrid = false;
     bool drawGrid = true;
+    bool drawMinorGridLines = true;
     bool drawAxis = true;
     bool drawVectorCoords = true;
     bool drawVectorName = true;

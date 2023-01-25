@@ -31,10 +31,10 @@ void DrawVectorSpaceWindow(std::unique_ptr<VectorSpace>& currentVs)
             Vector3 newVec = currentVs->VecToWorldSpace({pos.x - currentVs->drawOffset.x, pos.y - currentVs->drawOffset.y - ImGui::GetFrameHeight()});
 
             if (ImGui::Button("Add vector here")) {
-                Vector3 newTransformedVec = Vector3Transform(newVec, MatrixLerp(currentVs->GetTransformationMatrix(), currentVs->t));
-                currentVs->vectors.emplace_back(newTransformedVec.x, newTransformedVec.y, newTransformedVec.z);
+                currentVs->vectors.emplace_back(newVec.x, newVec.y, newVec.z);
                 ImGui::CloseCurrentPopup();
             }
+
             if (ImGui::Button("Transform X basis Vector here")) {
                 currentVs->ApplyTransformation({
                     newVec.x, currentVs->GetBasisY().X(), currentVs->GetBasisZ().X(), 0,
@@ -59,7 +59,7 @@ void DrawVectorSpaceWindow(std::unique_ptr<VectorSpace>& currentVs)
                            currentVs->GetBasisX().X(), currentVs->GetBasisY().X(), newVec.x, 0,
                            currentVs->GetBasisX().Y(), currentVs->GetBasisY().Y(), newVec.y, 0,
                            currentVs->GetBasisX().Z(), currentVs->GetBasisY().Z(), newVec.z, 0,
-                           0, 0,    0,     1
+                           0, 0, 0, 1
                    });
                 }
             }

@@ -27,7 +27,6 @@ int VectorSpace2D::GetDimension()
     return 2;
 }
 
-
 Vector2 worldStart;
 Vector2 worldEnd;
 const float labelFontSize = 18;
@@ -62,7 +61,7 @@ void VectorSpace2D::Update()
         camera.target = Vector2Subtract(mouseWorldPos, Vector2Scale({drawOffset.x, -drawOffset.y}, 1 / camera.zoom));
 
         // Zoom increment
-        camera.zoom = Clamp(camera.zoom + wheel / (step == 8 ? 4 : step), 5, 300);
+        camera.zoom = Clamp(camera.zoom + wheel / (step / 2.0f), 5, 300);
     }
 
     if (camera.zoom < 15) {
@@ -126,7 +125,6 @@ void VectorSpace2D::Draw()
     EndTextureMode();
 }
 
-
 void VectorSpace2D::ApplyTransformation(Matrix transformationMatrix)
 {
     this->transformationMatrix = transformationMatrix;
@@ -154,14 +152,16 @@ void VectorSpace2D::DrawOrigGrid()
     Vector3 unitX = {1, 0, 0};
     Vector3 unitY = {0, 1, 0};
 
-    // draw minor grid lines
-    Color minorLineColor = {33, 33, 33, 255};
-    for (int i = 0; i <= 3; ++i) {
-        for (int x = (int)worldStart.x - ((int)worldStart.x % step); x < worldEnd.x; x += step) {
-            DrawRay(Ray{{x + 0.25f * i * step, worldEnd.y, 0}, unitY}, minorLineColor);
-        }
-        for (int y = (int)worldStart.y - ((int)worldStart.y % step); y > worldEnd.y; y -= step) {
-            DrawRay(Ray{{worldStart.x, y + 0.25f * i * step, 0}, unitX}, minorLineColor);
+    Settings& settings = Settings::GetSettings();
+    if (settings.drawMinorGridLines) {
+        Color minorLineColor = {33, 33, 33, 255};
+        for (int i = 0; i <= 3; ++i) {
+            for (int x = (int)worldStart.x - ((int)worldStart.x % step); x < worldEnd.x; x += step) {
+                DrawRay(Ray{{x + 0.25f * i * step, worldEnd.y, 0}, unitY}, minorLineColor);
+            }
+            for (int y = (int)worldStart.y - ((int)worldStart.y % step); y > worldEnd.y; y -= step) {
+                DrawRay(Ray{{worldStart.x, y + 0.25f * i * step, 0}, unitX}, minorLineColor);
+            }
         }
     }
 
