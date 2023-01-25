@@ -24,4 +24,6 @@ void TextCentered(const std::string& text);
 
 ImVec4 ColorToImVec4(Color color);
 
+std::string UTF16ToUTF8(const std::u16string& str);
+
 #endif //VECVIZ_UTILS_H

@@ -1,3 +1,5 @@
+#include <locale>
+#include <codecvt>
 #include "utils.h"
 #include "raymath.h"
 
@@ -62,4 +64,9 @@ void TextCentered(const std::string& text)
 
 ImVec4 ColorToImVec4(Color color) {
     return {(color.r / 255.0f), (color.g / 255.0f), (color.b / 255.0f), (color.a / 255.0f)};
+}
+
+std::string UTF16ToUTF8(const std::u16string& str) {
+    std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> convert;
+    return convert.to_bytes(str);
 }

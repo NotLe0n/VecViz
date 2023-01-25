@@ -59,11 +59,12 @@ void DrawTransformationWindow(int currentVs, std::vector<std::shared_ptr<VectorS
             updatedValues = false;
         }
 
-        ImGui::BeginDisabled(!settings.drawGrid);
-        ImGui::Checkbox("Draw transformed grid", &settings.drawTransformedGrid);
-        ImGui::EndDisabled();
-
-        ImGui::SameLine();
+        if (vectorSpaces[currentVs]->GetDimension() > 1) {
+            ImGui::BeginDisabled(!settings.drawGrid);
+            ImGui::Checkbox("Draw transformed grid", &settings.drawTransformedGrid);
+            ImGui::EndDisabled();
+            ImGui::SameLine();
+        }
 
         ImGui::BeginDisabled(!(settings.drawVectorArrow || settings.drawVectorPoint || settings.drawVectorName || (settings.drawVectorLabel && (settings.drawVectorCoords || settings.drawCoordinateVectorPos))));
         ImGui::Checkbox("Draw basis vectors", &settings.drawBasisVectors);

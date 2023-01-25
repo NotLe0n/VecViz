@@ -15,6 +15,11 @@ void DrawVectorSpaceWindow(int& currentVs, std::vector<std::shared_ptr<VectorSpa
             return;
         }
 
+        if (ImGui::IsWindowHovered()) {
+            vectorSpaces[currentVs]->Update();
+        }
+        vectorSpaces[currentVs]->Draw();
+
         ImGui::BeginTabBar("Vector space tabs");
         for (int i = 0; i < vectorSpaces.size(); ++i) {
             std::string vsName = "Vectorspace " + std::to_string(vectorSpaces[i]->GetDimension()) + "D #" + std::to_string(i + 1);
@@ -71,12 +76,6 @@ void DrawVectorSpaceWindow(int& currentVs, std::vector<std::shared_ptr<VectorSpa
                     }
                     ImGui::EndPopup();
                 }
-
-                if (ImGui::IsWindowHovered()) {
-                    vectorSpaces[currentVs]->Update();
-                }
-                vectorSpaces[currentVs]->Draw();
-
                 ImGui::EndTabItem();
             }
         }

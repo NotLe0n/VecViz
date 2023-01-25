@@ -18,10 +18,11 @@ void DrawVectorsWindow(int currentVs, std::vector<std::shared_ptr<VectorSpace>> 
     {
         float numberInputWidth = ImGui::CalcTextSize("8.88888").x;
 
-        ImGui::SetNextItemWidth(numberInputWidth + 100);
-        ImGui::InputFloat2("##AddVectorInput", addVectorVals, settings.GetDecimalPrecisionStr().c_str());
-
-        ImGui::SameLine();
+        for (int i = 0; i < vectorSpaces[currentVs]->GetDimension(); ++i) {
+            ImGui::SetNextItemWidth(numberInputWidth + 100);
+            ImGui::InputFloat("##AddVectorInput", addVectorVals, 0, 0, settings.GetDecimalPrecisionStr().c_str());
+            ImGui::SameLine();
+        }
 
         // Add Button
         if (ImGui::Button("Add Vector")) {
@@ -38,7 +39,6 @@ void DrawVectorsWindow(int currentVs, std::vector<std::shared_ptr<VectorSpace>> 
             for (int n = 0; n < vectorSpaces[currentVs]->vectors.size(); n++) {
                 if (vectorSpaces[currentVs]->vectors[n].selected) {
                     vectorSpaces[currentVs]->vectors.erase(vectorSpaces[currentVs]->vectors.begin() + n);
-                    //selectVectorList.erase(selectVectorList.begin() + n);
                     n--;
                 }
             }
@@ -69,15 +69,13 @@ void DrawVectorsWindow(int currentVs, std::vector<std::shared_ptr<VectorSpace>> 
 
                 ImGui::Text("v%d:", n);
 
-                ImGui::SameLine();
-
-                ImGui::SetNextItemWidth(numberInputWidth + 100);
-                ImGui::InputFloat(("##VectorInputX" + indexStr).c_str(), &vector.vector.x, 1, 0, settings.GetDecimalPrecisionStr().c_str());
-
-                ImGui::SameLine();
-
-                ImGui::SetNextItemWidth(numberInputWidth + 100);
-                ImGui::InputFloat(("##VectorInputY" + indexStr).c_str(), &vector.vector.y, 1, 0, settings.GetDecimalPrecisionStr().c_str());
+                for (int i = 0; i < vectorSpaces[currentVs]->GetDimension(); ++i) {
+                    ImGui::SameLine();
+                    ImGui::SetNextItemWidth(numberInputWidth + 100);
+                    std::string str = "##VectorInputX" + indexStr + "_" + std::to_string(i);
+                    float* ptr = i == 0 ? &vector.vector.x : (i == 1 ? &vector.vector.y : &vector.vector.z);
+                    ImGui::InputFloat(str.c_str(), ptr, 1, 0, settings.GetDecimalPrecisionStr().c_str());
+                }
 
                 ImGui::PopStyleVar();
                 ImGui::PopID();

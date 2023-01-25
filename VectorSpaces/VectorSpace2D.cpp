@@ -9,7 +9,6 @@
 
 VectorSpace2D::VectorSpace2D()
 {
-    camera = Camera2D();
     camera.zoom = 50.0;
     camera.offset = {GetScreenWidth() / 2.0f, GetScreenHeight() / 2.0f};
 }
@@ -284,9 +283,7 @@ void VectorSpace2D::DrawAVector(DrawVector vector, const std::u16string& name, C
             Vector2 labelPosition = {screenPos.x + 10.0f / camera.zoom, screenPos.y - 20.0f / camera.zoom};
 
             if (settings.drawVectorName) {
-                std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> convert;
-                std::string utf8_name = convert.to_bytes(name);
-                Drawing::DrawText(utf8_name, labelPosition.x, labelPosition.y, color, labelFontSize * 2);
+                Drawing::DrawText(UTF16ToUTF8(name), labelPosition.x, labelPosition.y, color, labelFontSize * 2);
             }
 
             if (settings.drawVectorCoords) {
