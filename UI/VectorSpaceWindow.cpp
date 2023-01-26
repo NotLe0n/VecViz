@@ -7,6 +7,10 @@ void DrawVectorSpaceWindow(int& currentVs, const std::vector<std::unique_ptr<Vec
 {
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
     ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+    
+    ImGuiWindowClass window_class;
+    window_class.DockNodeFlagsOverrideSet = ImGuiDockNodeFlags_AutoHideTabBar;
+    ImGui::SetNextWindowClass(&window_class);
     if (ImGui::Begin("Vector space view", nullptr, ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollWithMouse)) {
         if (vectorSpaces.empty()) {
             TextCentered("Create a new vector space under 'File -> New Vector Space...'");
