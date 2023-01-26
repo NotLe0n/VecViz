@@ -3,7 +3,7 @@
 #include "rlImGui.h"
 #include "../utils.h"
 
-void DrawVectorSpaceWindow(int& currentVs, const std::vector<std::unique_ptr<VectorSpace>>& vectorSpaces)
+void DrawVectorSpaceWindow(unsigned int& currentVs, std::vector<std::unique_ptr<VectorSpace>>& vectorSpaces)
 {
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
     ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
@@ -12,6 +12,16 @@ void DrawVectorSpaceWindow(int& currentVs, const std::vector<std::unique_ptr<Vec
     window_class.DockNodeFlagsOverrideSet = ImGuiDockNodeFlags_AutoHideTabBar;
     ImGui::SetNextWindowClass(&window_class);
     if (ImGui::Begin("Vector space view", nullptr, ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollWithMouse)) {
+        for (int i = 0; i < vectorSpaces.size(); ++i) {
+            if (!vectorSpaces[i]->windowOpen) {
+                if (i == currentVs) {
+                    currentVs--;
+                }
+                vectorSpaces.erase(vectorSpaces.begin() + i);
+                i--;
+            }
+        }
+
         if (vectorSpaces.empty()) {
             TextCentered("Create a new vector space under 'File -> New Vector Space...'");
             ImGui::End();
@@ -28,7 +38,7 @@ void DrawVectorSpaceWindow(int& currentVs, const std::vector<std::unique_ptr<Vec
         for (int i = 0; i < vectorSpaces.size(); ++i) {
             std::string vsName = "Vectorspace " + std::to_string(vectorSpaces[i]->GetDimension()) + "D #" + std::to_string(i + 1);
 
-            if (ImGui::BeginTabItem(vsName.c_str())) {
+            if (ImGui::BeginTabItem(vsName.c_str(), &vectorSpaces[i]->windowOpen)) {
                 currentVs = i;
                 Texture* renderTexture = &vectorSpaces[currentVs]->GetRenderTexture()->texture;
                 VectorSpace::drawOffset = {ImGui::GetWindowPos().x, ImGui::GetWindowPos().y};

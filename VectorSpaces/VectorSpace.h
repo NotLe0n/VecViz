@@ -33,6 +33,7 @@ public:
     DrawVector GetBasisY();
     DrawVector GetBasisZ();
     Matrix GetTransformationMatrix();
+    bool windowOpen = true;
 
 public:
     virtual int GetDimension() = 0;

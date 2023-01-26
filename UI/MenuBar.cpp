@@ -5,7 +5,7 @@
 #include "../Settings.h"
 #include "../VectorSpaces/VectorSpace1D.h"
 
-bool DrawMenuBar(int& currentVs, std::vector<std::unique_ptr<VectorSpace>>& vectorSpaces)
+bool DrawMenuBar(unsigned int& currentVs, std::vector<std::unique_ptr<VectorSpace>>& vectorSpaces)
 {
     Settings& settings = Settings::GetSettings();
 
@@ -33,6 +33,10 @@ bool DrawMenuBar(int& currentVs, std::vector<std::unique_ptr<VectorSpace>>& vect
                 // TODO
             }
 
+            if (ImGui::MenuItem("Close current vector spaces")) {
+                vectorSpaces.erase(vectorSpaces.begin() + currentVs);
+            }
+
             if (ImGui::MenuItem("Close all vector spaces")) {
                 vectorSpaces.clear();
             }
@@ -53,11 +57,7 @@ bool DrawMenuBar(int& currentVs, std::vector<std::unique_ptr<VectorSpace>>& vect
             ImGui::MenuItem("Show vectors window", nullptr, &settings.showVectorsWindow);
             ImGui::MenuItem("Show transformations window", nullptr, &settings.showTransformationsWindow);
 
-            ImGui::EndMenu();
-        }
-
-        if (ImGui::BeginMenu("Options")) {
-            if (ImGui::MenuItem("Vector space options...")) {
+            if (ImGui::MenuItem("Open options...")) {
                 settings.showOptionsWindow = true;
             }
 

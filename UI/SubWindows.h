@@ -4,10 +4,10 @@
 #include <memory>
 #include "../VectorSpaces/VectorSpace.h"
 
-void DrawTransformationWindow(int currentVs, const std::vector<std::unique_ptr<VectorSpace>>& vectorSpaces);
-void DrawVectorSpaceWindow(int& currentVs, const std::vector<std::unique_ptr<VectorSpace>>& vectorSpaces);
-void DrawVectorsWindow(int currentVs, const std::vector<std::unique_ptr<VectorSpace>>& vectorSpaces);
-bool DrawMenuBar(int& currentVs, std::vector<std::unique_ptr<VectorSpace>>& vectorSpaces);
+void DrawTransformationWindow(unsigned int currentVs, const std::vector<std::unique_ptr<VectorSpace>>& vectorSpaces);
+void DrawVectorSpaceWindow(unsigned int& currentVs, std::vector<std::unique_ptr<VectorSpace>>& vectorSpaces);
+void DrawVectorsWindow(unsigned int currentVs, const std::vector<std::unique_ptr<VectorSpace>>& vectorSpaces);
+bool DrawMenuBar(unsigned int& currentVs, std::vector<std::unique_ptr<VectorSpace>>& vectorSpaces);
 void DrawOptionsWindow();
 
 #endif //VECVIZ_SUBWINDOWS_H

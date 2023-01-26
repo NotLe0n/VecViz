@@ -13,7 +13,7 @@ int main()
     }
 
     std::vector<std::unique_ptr<VectorSpace>> vectorSpaces = {};
-    int currentVs = -1;
+    unsigned int currentVs = 0;
     //std::unique_ptr<VectorSpace> currentVs;
 
     UIWindow::Draw([&currentVs, &vectorSpaces] {

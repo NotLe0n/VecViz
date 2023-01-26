@@ -6,7 +6,7 @@
 
 float addVectorVals[] = {0, 0};
 
-void DrawVectorsWindow(int currentVs, const std::vector<std::unique_ptr<VectorSpace>>& vectorSpaces)
+void DrawVectorsWindow(unsigned int currentVs, const std::vector<std::unique_ptr<VectorSpace>>& vectorSpaces)
 {
     Settings& settings = Settings::GetSettings();
 

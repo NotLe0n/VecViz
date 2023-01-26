@@ -5,7 +5,7 @@
 
 bool updatedValues;
 
-void DrawTransformationWindow(int currentVs, const std::vector<std::unique_ptr<VectorSpace>>& vectorSpaces)
+void DrawTransformationWindow(unsigned int currentVs, const std::vector<std::unique_ptr<VectorSpace>>& vectorSpaces)
 {
     Settings& settings = Settings::GetSettings();
 
