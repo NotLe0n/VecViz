@@ -12,7 +12,7 @@ int main()
         return -1;
     }
 
-    std::vector<std::shared_ptr<VectorSpace>> vectorSpaces = {};
+    std::vector<std::unique_ptr<VectorSpace>> vectorSpaces = {};
     int currentVs = -1;
     //std::unique_ptr<VectorSpace> currentVs;
 

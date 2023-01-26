@@ -5,7 +5,7 @@
 #include "../Settings.h"
 #include "../VectorSpaces/VectorSpace1D.h"
 
-bool DrawMenuBar(int& currentVs, std::vector<std::shared_ptr<VectorSpace>>& vectorSpaces)
+bool DrawMenuBar(int& currentVs, std::vector<std::unique_ptr<VectorSpace>>& vectorSpaces)
 {
     Settings& settings = Settings::GetSettings();
 
@@ -13,13 +13,11 @@ bool DrawMenuBar(int& currentVs, std::vector<std::shared_ptr<VectorSpace>>& vect
         if (ImGui::BeginMenu("File")) {
             if (ImGui::BeginMenu("New vector space")) {
                 if (ImGui::MenuItem("1D vector space")) {
-                    std::shared_ptr<VectorSpace> newVs = std::make_shared<VectorSpace1D>();
-                    vectorSpaces.push_back(newVs);
+                    vectorSpaces.push_back(std::make_unique<VectorSpace1D>());
                     currentVs = vectorSpaces.size() - 1;
                 }
                 if (ImGui::MenuItem("2D vector space")) {
-                    std::shared_ptr<VectorSpace> newVs = std::make_shared<VectorSpace2D>();
-                    vectorSpaces.push_back(newVs);
+                    vectorSpaces.push_back(std::make_unique<VectorSpace2D>());
                     currentVs = vectorSpaces.size() - 1;
                 }
                 if (ImGui::MenuItem("3D vector space")) {

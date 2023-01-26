@@ -32,13 +32,6 @@ void VectorSpace1D::Draw()
 
             if (settings.drawAxis) {
                 DrawAxis();
-
-                // Origin label
-                Drawing::DrawToOtherRt(camera, rt, textTexture, [this]{
-                    Vector2 textSize = Drawing::MeasureText("0", labelFontSize);
-                    Vector3 pos = WorldVecToScreenSpace({0, 0, 0});
-                    Drawing::DrawText("0", pos.x - textSize.x - 5, pos.y + 5, WHITE, labelFontSize);
-                });
             }
 
             DrawVectors();
@@ -69,17 +62,16 @@ void VectorSpace1D::Update()
     float wheel = GetMouseWheelMove();
     if (wheel != 0) {
         Vector2 rtMousePos = GetMousePosition();
-        rtMousePos.y = GetMonitorHeight(GetCurrentMonitor()) - rtMousePos.y - drawOffset.y;
 
         // Get the world point that is under the mouse
         Vector2 mouseWorldPos = GetScreenToWorld2D(rtMousePos, camera);
 
         // Set the offset to where the mouse is
-        camera.offset = Vector2Subtract(rtMousePos, {drawOffset.x, -drawOffset.y});
+        camera.offset.x = rtMousePos.x - drawOffset.x;
 
         // Set the target to match, so that the camera maps the world space point
         // under the cursor to the screen space point under the cursor at any zoom
-        camera.target = Vector2Subtract(mouseWorldPos, Vector2Scale({drawOffset.x, -drawOffset.y}, 1 / camera.zoom));
+        camera.target.x = mouseWorldPos.x - drawOffset.x / camera.zoom;
 
         // Zoom increment
         camera.zoom = Clamp(camera.zoom + wheel / (step / 2.0f), 5, 300);
@@ -126,18 +118,17 @@ void VectorSpace1D::DrawAxisTicks()
 {
     int start = (int)worldStart - ((int)worldStart % step); // corrected for uneven worldStart on step = 2
     for (int x = start; x < worldEnd; x += step) {
-        Vector2 a = {(float)x, .2f};
-        Vector2 b = {(float)x, -.2f};
+        Vector2 a = {(float)x, 10 / camera.zoom};
+        Vector2 b = {(float)x, -10 / camera.zoom};
 
         // Draw X axis ticks
         DrawLineV(a, b, WHITE);
 
         // Draw X axis tick labels
-        if (x == 0) continue;
         Drawing::DrawToOtherRt(camera, rt, textTexture, [&x, &b, this] {
             Vector2 textSize = Drawing::MeasureText(std::to_string(x), labelFontSize);
             Vector3 pos = WorldVecToScreenSpace(V2ToV3(b));
-            Drawing::DrawText(std::to_string(x), pos.x - textSize.x / 2, pos.y, WHITE, labelFontSize);
+            Drawing::DrawText(std::to_string(x), pos.x - textSize.x / 2, pos.y + 15, WHITE, labelFontSize);
         });
     }
 }

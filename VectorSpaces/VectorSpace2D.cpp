@@ -1,11 +1,9 @@
-#include <codecvt>
-#include <locale>
 #include <sstream>
 #include "VectorSpace2D.h"
-#include "../Drawing.h"
-#include "../utils.h"
 #include "../Settings.h"
+#include "../Drawing.h"
 #include "../FontManager.h"
+#include "../utils.h"
 
 VectorSpace2D::VectorSpace2D()
 {

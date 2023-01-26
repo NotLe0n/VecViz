@@ -3,7 +3,7 @@
 #include "rlImGui.h"
 #include "../utils.h"
 
-void DrawVectorSpaceWindow(int& currentVs, std::vector<std::shared_ptr<VectorSpace>> vectorSpaces)
+void DrawVectorSpaceWindow(int& currentVs, const std::vector<std::unique_ptr<VectorSpace>>& vectorSpaces)
 {
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
     ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
