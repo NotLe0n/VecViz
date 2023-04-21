@@ -2,7 +2,9 @@
 #define VECVIZ_UTILS_H
 
 #include <vector>
+#include <queue>
 #include <string>
+#include <stack>
 #include "raylib.h"
 #include "imgui.h"
 
@@ -25,5 +27,21 @@ void TextCentered(const std::string& text);
 ImVec4 ColorToImVec4(Color color);
 
 std::string UTF16ToUTF8(const std::u16string& str);
+
+bool IsDigit(char c);
+
+template<typename T>
+T pop(std::stack<T>& stack) {
+    T t = stack.top();
+    stack.pop();
+    return t;
+}
+
+template<typename T>
+T pop(std::queue<T>& queue) {
+    T t = queue.front();
+    queue.pop();
+    return t;
+}
 
 #endif //VECVIZ_UTILS_H

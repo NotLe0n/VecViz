@@ -11,7 +11,7 @@ int main()
     if (!UIWindow::Init()){
         return -1;
     }
-
+    
     std::vector<std::unique_ptr<VectorSpace>> vectorSpaces = {};
     unsigned int currentVs = 0;
     //std::unique_ptr<VectorSpace> currentVs;
@@ -24,6 +24,7 @@ int main()
             DrawVectorsWindow(currentVs, vectorSpaces);
             DrawTransformationWindow(currentVs, vectorSpaces);
             DrawOptionsWindow();
+            DrawCalcWindow(currentVs, vectorSpaces);
         }
 
         static bool first_time = true;

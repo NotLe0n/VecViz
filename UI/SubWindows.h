@@ -9,5 +9,6 @@ void DrawVectorSpaceWindow(unsigned int& currentVs, std::vector<std::unique_ptr<
 void DrawVectorsWindow(unsigned int currentVs, const std::vector<std::unique_ptr<VectorSpace>>& vectorSpaces);
 bool DrawMenuBar(unsigned int& currentVs, std::vector<std::unique_ptr<VectorSpace>>& vectorSpaces);
 void DrawOptionsWindow();
+void DrawCalcWindow(unsigned int& currentVs, std::vector<std::unique_ptr<VectorSpace>>& vectorSpaces);
 
 #endif //VECVIZ_SUBWINDOWS_H

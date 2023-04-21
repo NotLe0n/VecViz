@@ -56,6 +56,7 @@ bool DrawMenuBar(unsigned int& currentVs, std::vector<std::unique_ptr<VectorSpac
         if (ImGui::BeginMenu("View")) {
             ImGui::MenuItem("Show vectors window", nullptr, &settings.showVectorsWindow);
             ImGui::MenuItem("Show transformations window", nullptr, &settings.showTransformationsWindow);
+            ImGui::MenuItem("Show calc window", nullptr, &settings.showCalcWindow);
 
             if (ImGui::MenuItem("Open options...")) {
                 settings.showOptionsWindow = true;

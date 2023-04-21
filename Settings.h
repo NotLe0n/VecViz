@@ -28,6 +28,7 @@ public:
     bool showVectorsWindow = true;
     bool showTransformationsWindow = true;
     bool showOptionsWindow = false;
+    bool showCalcWindow = true;
 
     // transfomation window settings
     bool sinusMode = false;

@@ -75,6 +75,7 @@ void VectorSpace2D::Draw()
     BeginTextureMode(rt);
     {
         ClearBackground(Color{20, 20, 20, 255});
+
         BeginMode2D(camera);
         {
             Settings& settings = Settings::GetSettings();

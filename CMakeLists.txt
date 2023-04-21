@@ -24,7 +24,7 @@ if (NOT raylib_FOUND) # If there's none, fetch and build raylib
 endif()
 
 # Our Project
-add_executable(${PROJECT_NAME} main.cpp UI/UIWindow.cpp UI/UIWindow.h FontManager.cpp FontManager.h utils.h utils.cpp VectorSpaces/VectorSpace.h VectorSpaces/VectorSpace2D.cpp VectorSpaces/VectorSpace2D.h VectorSpaces/DrawVector.cpp VectorSpaces/DrawVector.h Drawing.h lib/rlImGui/rlImGui.cpp lib/rlImGui/rlImGui.h lib/imgui/imgui.h lib/imgui/imgui.cpp lib/imgui/imgui_internal.h lib/imgui/imgui_draw.cpp lib/imgui/imgui_tables.cpp lib/imgui/imgui_demo.cpp lib/imgui/imgui_widgets.cpp VectorSpaces/VectorSpace.cpp UI/VectorsWindow.cpp UI/TransformationWindow.cpp UI/VectorSpaceWindow.cpp UI/SubWindows.h UI/MenuBar.cpp Settings.cpp Settings.h Singleton.h Drawing.cpp UI/OptionsWindow.cpp VectorSpaces/VectorSpace1D.cpp VectorSpaces/VectorSpace1D.h)
+add_executable(${PROJECT_NAME} main.cpp UI/UIWindow.cpp UI/UIWindow.h FontManager.cpp FontManager.h utils.h utils.cpp VectorSpaces/VectorSpace.h VectorSpaces/VectorSpace2D.cpp VectorSpaces/VectorSpace2D.h VectorSpaces/DrawVector.cpp VectorSpaces/DrawVector.h Drawing.h lib/rlImGui/rlImGui.cpp lib/rlImGui/rlImGui.h lib/imgui/imgui.h lib/imgui/imgui.cpp lib/imgui/imgui_internal.h lib/imgui/imgui_draw.cpp lib/imgui/imgui_tables.cpp lib/imgui/imgui_demo.cpp lib/imgui/imgui_widgets.cpp VectorSpaces/VectorSpace.cpp UI/VectorsWindow.cpp UI/TransformationWindow.cpp UI/VectorSpaceWindow.cpp UI/SubWindows.h UI/MenuBar.cpp Settings.cpp Settings.h Singleton.h Drawing.cpp UI/OptionsWindow.cpp VectorSpaces/VectorSpace1D.cpp VectorSpaces/VectorSpace1D.h UI/CalcWindow.cpp CalcInterpreter.cpp CalcInterpreter.h)
 #set(raylib_VERBOSE 1)
 target_link_libraries(${PROJECT_NAME} raylib)
 include_directories(lib/imgui lib/rlImGui)
