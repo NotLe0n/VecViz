@@ -14,8 +14,7 @@ void DrawVectorsWindow(unsigned int currentVs, const std::vector<std::unique_ptr
         return;
     }
 
-    if (ImGui::Begin("Vectors", &settings.showVectorsWindow))
-    {
+    if (ImGui::Begin("Vectors", &settings.showVectorsWindow)) {
         float numberInputWidth = ImGui::CalcTextSize("8.88888").x;
 
         for (int i = 0; i < vectorSpaces[currentVs]->GetDimension(); ++i) {
@@ -45,7 +44,12 @@ void DrawVectorsWindow(unsigned int currentVs, const std::vector<std::unique_ptr
         }
         ImGui::EndDisabled();
 
-        if (ImGui::BeginListBox("##VectorList", ImVec2(500, 10 * ImGui::GetTextLineHeightWithSpacing()))) {
+        ImGui::SameLine();
+        if (ImGui::Button("Cl")) {
+            vectorSpaces[currentVs]->vectors.clear();
+        }
+
+        if (ImGui::BeginListBox("##VectorList", ImVec2(ImGui::GetWindowWidth() - 16, ImGui::GetWindowHeight() - 68))) {
             for (int n = 0; n < vectorSpaces[currentVs]->vectors.size(); n++) {
                 ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(5, 5));
                 ImGui::PushID(n);
@@ -56,13 +60,12 @@ void DrawVectorsWindow(unsigned int currentVs, const std::vector<std::unique_ptr
                 ImGui::SetCursorPos(ImVec2(ImGui::GetCursorPos().x, ImGui::GetCursorPos().y + 3));
 
                 ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 10));
-                ImGui::Selectable("", &vector.selected/*(bool*)&selectVectorList[n]*/, ImGuiSelectableFlags_AllowItemOverlap);
+                ImGui::Selectable("", &vector.selected, ImGuiSelectableFlags_AllowItemOverlap);
                 ImGui::PopStyleVar();
 
                 ImGui::SameLine();
 
                 ImGui::SetCursorPos(ImVec2(ImGui::GetCursorPos().x, ImGui::GetCursorPos().y - 3));
-
                 ImGui::ColorEdit4(("##VectorColorSelect" + indexStr).c_str(), (float*)&vector.color, ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoLabel | ImGuiColorEditFlags_NoAlpha | ImGuiColorEditFlags_NoBorder);
 
                 ImGui::SameLine();

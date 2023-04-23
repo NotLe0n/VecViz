@@ -47,7 +47,7 @@ void DrawVectorSpaceWindow(unsigned int& currentVs, std::vector<std::unique_ptr<
                 float rth = ImGui::GetWindowHeight() - ImGui::GetFrameHeight();
                 rlImGuiImageRect(renderTexture, rtw, rth, {0, 0, rtw, rth});
 
-                if (ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
+                if (ImGui::IsMouseClicked(ImGuiMouseButton_Right) && ImGui::IsWindowHovered()) {
                     ImGui::OpenPopup("rightClickPopup");
                 }
 

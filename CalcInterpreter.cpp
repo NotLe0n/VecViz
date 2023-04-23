@@ -5,12 +5,12 @@
 #include <cassert>
 #include <cmath>
 #include "raymath.h"
+#include "sstream"
 
 namespace CalcInterpreter
 {
     std::variant<Vector3, float> Interpret(char text[], std::vector<DrawVector> vectors)
     {
-        using CalcVal = std::variant<Vector3, float>;
         auto isFloat = [](const CalcVal& v) { return v.index() == 1; };
         auto isVec = [](const CalcVal& v) { return v.index() == 0; };
         auto getVec = [](const CalcVal& v) { return std::get<Vector3>(v); };
@@ -30,15 +30,29 @@ namespace CalcInterpreter
                     break;
                 }
                 case VEC: {
-                    float x = getFloat(pop(nums));
-                    float y = nums.empty() ? 0 : getFloat(pop(nums));
-                    float z = nums.empty() ? 0 : getFloat(pop(nums));
+                    if (nums.empty()) {
+                        nums.emplace(Vector3Zero());
+                        break;
+                    }
+                    float z = getFloat(pop(nums));
+                    if (nums.empty()) {
+                        nums.emplace(Vector3{z, 0, 0});
+                        break;
+                    }
 
-                    nums.emplace(Vector3{z, y, x});
+                    float y = getFloat(pop(nums));
+                    if (nums.empty()) {
+                        nums.emplace(Vector3{y, z, 0});
+                        break;
+                    }
+
+                    float x = getFloat(pop(nums));
+                    nums.emplace(Vector3{x, y, z});
                     break;
                 }
                 case VAR: {
-                    int n = (int)getFloat(pop(nums));
+                    auto sn = token.lexeme.substr(1);
+                    auto n = (unsigned int)std::atoi(sn.c_str());
                     if (n < vectors.size()) {
                         nums.emplace(vectors[n].vector);
                     }
@@ -121,6 +135,37 @@ namespace CalcInterpreter
                     }
                     break;
                 }
+                case DOT: {
+                    std::variant<Vector3, float> a = pop(nums);
+                    std::variant<Vector3, float> b = pop(nums);
+                    if (isVec(a) && isVec(b)) {
+                        Vector3 vb = getVec(b);
+                        Vector3 va = getVec(a);
+                        if (va.z == 0 && vb.z == 0) {
+                            nums.emplace(vb.x*va.x + vb.y*va.y);
+                        }
+                        else {
+                            nums.emplace(Vector3DotProduct(getVec(b), getVec(a)));
+                        }
+                    }
+                    break;
+                }
+                case CROSS: {
+                    std::variant<Vector3, float> a = pop(nums);
+                    std::variant<Vector3, float> b = pop(nums);
+                    if (isVec(a) && isVec(b)) {
+                        Vector3 vb = getVec(b);
+                        Vector3 va = getVec(a);
+
+                        if (va.z == 0 && vb.z == 0) {
+                            nums.emplace(vb.x * va.y - vb.y * va.x);
+                        }
+                        else {
+                            nums.emplace(Vector3CrossProduct(vb, va));
+                        }
+                    }
+                    break;
+                }
                 default:
                     break;
             }
@@ -128,7 +173,7 @@ namespace CalcInterpreter
             tokens.pop();
         }
         if (nums.empty()) {
-            return 0;
+            return 0.0f;
         }
 
         return nums.top();
@@ -140,7 +185,7 @@ namespace CalcInterpreter
         std::stack<MathToken> operatorStack;
 
         size_t tokenCount = tokens.size();
-        for (int i = 0; i < tokenCount; ++i) {
+        for (size_t i = 0; i < tokenCount; ++i) {
             MathToken token = tokens.front();
             if (!tokens.empty()) tokens.pop();
 
@@ -206,7 +251,7 @@ namespace CalcInterpreter
                     tokens.push({PLUS, "+", 2, LEFT});
                     break;
                 case '-':
-                    if (current == 1 || prevToken.lexeme == "(" || prevToken.assoc != NONE || prevToken.type == MINUS) {
+                    if (current == 1 || prevToken.lexeme == "(" || prevToken.lexeme == "{" || prevToken.assoc != NONE || prevToken.type == MINUS) {
                         tokens.push({NEG, "-", 4, RIGHT});
                     } else {
                         tokens.push({MINUS, "-", 2, LEFT});
@@ -217,6 +262,12 @@ namespace CalcInterpreter
                     break;
                 case '/':
                     tokens.push({DIV, "/", 3, LEFT});
+                    break;
+                case '.':
+                    tokens.push({DOT, ".", 3, LEFT});
+                    break;
+                case 'x':
+                    tokens.push({CROSS, "x", 3, LEFT});
                     break;
                 case '^':
                     tokens.push({EXP, "^", 4, RIGHT});
@@ -236,12 +287,21 @@ namespace CalcInterpreter
                 case ' ':
                     // ignore
                     break;
-                case 'v':
-                   tokens.push({VAR, "v", 6});
+                case 'v': {
+                    std::string n("v");
+                    while (IsDigit(text[current])) {
+                        n += text[current++];
+                    }
+                    tokens.push({VAR, n, 6});
+                }
                 default:
                     if (IsDigit(c)) {
                         std::string num(1, c);
                         while (IsDigit(text[current]) || text[current] == '.') {
+                            if (text[current] == '.' && !IsDigit(text[current+1])){
+                                current++;
+                                break;
+                            }
                             num += text[current++];
                         }
                         tokens.push({NUMBER, num});
@@ -253,5 +313,18 @@ namespace CalcInterpreter
         }
 
         return tokens;
+    }
+
+    std::string calVal_to_string(CalcVal calVal) {
+        std::stringstream stringBuilder;
+        stringBuilder.precision(6);
+        if (calVal.index() == 0) {
+            Vector3 sv = std::get<Vector3>(calVal);
+            stringBuilder << "{ " << sv.x << ", " << sv.y << ", " << sv.z << " }";
+        }
+        else {
+            stringBuilder << std::get<float>(calVal);
+        }
+        return stringBuilder.str();
     }
 }

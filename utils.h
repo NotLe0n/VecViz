@@ -32,6 +32,10 @@ bool IsDigit(char c);
 
 template<typename T>
 T pop(std::stack<T>& stack) {
+    if (stack.empty()) {
+        throw std::exception("tried popping empty stack");
+    }
+
     T t = stack.top();
     stack.pop();
     return t;
@@ -39,6 +43,10 @@ T pop(std::stack<T>& stack) {
 
 template<typename T>
 T pop(std::queue<T>& queue) {
+    if (queue.empty()) {
+        throw std::exception("tried popping empty queue");
+    }
+
     T t = queue.front();
     queue.pop();
     return t;
